@@ -6,10 +6,13 @@ uniform mat4 model, view, proj;
 
 layout(location = 0) in vec3 vPos;
 layout(location = 1) in vec3 vNormal;
+layout(location = 2) in vec2 vertexUV;
 
 out mat4 modelView;
 out vec3 fPos;
 out vec3 fNormal;
+
+out vec2 UV;
 
 void main() {
     modelView = view * model;
@@ -19,4 +22,5 @@ void main() {
 	fNormal = vNormal;
 
     gl_Position = proj * vec4(fPos, 1);
+    UV = vertexUV;
 }

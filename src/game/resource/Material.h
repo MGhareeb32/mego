@@ -9,13 +9,14 @@ namespace game {
 class Material : public Resource {
     glm::vec3 ka_, kd_, ks_;
     GLfloat ns_, tr_;
+    GLuint textureID_;
 public:
     Material(std::string uid,
              glm::vec3 ka = glm::vec3(.2f, .2f, .2f),
              glm::vec3 kd = glm::vec3(.8f, .8f, .8f),
              glm::vec3 ks = glm::vec3(1.f, 1.f, 1.f), GLfloat ns = 0.f,
-             GLfloat tr = 1.f)
-        : Resource(uid), ka_(ka), kd_(kd), ks_(ks), ns_(ns), tr_(tr) {};
+             GLfloat tr = 1.f ,GLuint textureID = 0)
+        : Resource(uid), ka_(ka), kd_(kd), ks_(ks), ns_(ns), tr_(tr) , textureID_(textureID) {};
     ~Material() {};
 
     glm::vec3 ka() { return ka_; }
@@ -23,6 +24,7 @@ public:
     glm::vec3 ks() { return ks_; }
     GLfloat ns() { return ns_; }
     GLfloat tr() { return tr_; }
+    GLfloat textureID() { return textureID_; }
 };
 
 }

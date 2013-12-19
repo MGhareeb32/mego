@@ -18,6 +18,12 @@ in mat4 modelView;
 in vec3 fPos;
 in vec3 fNormal;
 
+
+in vec2 UV;
+
+uniform sampler2D myTextureSampler;
+
+
 vec3 rgb2hsv(vec3 c) {
     vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
     vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
@@ -54,9 +60,12 @@ void main() {
         vec3 diffuse = lights[i][2].xyz * kd * max(dot(L, N), 0);
         vec3 specular = lights[i][3].xyz * ks * pow(max(dot(N, H), 0), ns);
 
-        afterLight += (ambient + diffuse + specular);
+        afterLight += (ambient + diffuse);
+    	afterLight *= texture2D(myTextureSampler, UV);
+    	afterLight += specular;
     }
-
+    
+    
     // FOG
     vec3 afterFog = mix(afterLight, scene_color,
                         clamp(0 * -scene_fog * fPos.z, 0, 1));
