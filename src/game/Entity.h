@@ -39,6 +39,15 @@ public:
     glm::vec3 u() { return u_; }
     glm::vec3 v() { return v_; }
 
+    void transform(glm::mat4 m) {
+        transform_ = m * transform_;
+        transform_i_ = transform_i_ * glm::inverse(m);
+        o_ = glm::vec3(m * glm::vec4(o_, 1.f));
+        n_ = glm::vec3(m * glm::vec4(n_, 0.f));
+        u_ = glm::vec3(m * glm::vec4(u_, 0.f));
+        v_ = glm::vec3(m * glm::vec4(v_, 0.f));
+    }
+
     void translate(glm::vec3 d);
 
     void scale(glm::vec3 s, glm::vec3 offset);

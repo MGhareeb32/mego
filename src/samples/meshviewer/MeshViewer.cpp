@@ -3,8 +3,8 @@
 MeshViewer::MeshViewer() {
     game::fogSet(glm::vec4(0.4f, 0.4f, 0.4f, 1.f), 0.f);
     cam_ = new game::Camera();
-    cam_->persp();
     game::cameraSet(cam_);
+    game::mouseLock(true);
     // load
     obj_mesh_ = (game::Mesh*)game::ResMgr::load
         ("res/mesh/viewer/teapot.obj");
@@ -76,7 +76,19 @@ void MeshViewer::update() {
         myCamera->rotate(-speed, glm::vec3(0, 0, 1));
 
     if (game::key_down_['A'])
-        myCamera->translate(-myCamera->u() * .1f);
+        myCamera->transform(glm::translate(-myCamera->u() * .1f));
+//        myCamera->translate(-myCamera->u() * .1f);
     if (game::key_down_['D'])
-        myCamera->translate(myCamera->u() * .1f);
+        myCamera->transform(glm::translate(myCamera->u() * .1f));
+    if (game::key_down_['W'])
+        myCamera->translate(-myCamera->n() * .1f);
+    if (game::key_down_['S'])
+        myCamera->translate(myCamera->n() * .1f);
+    // fps controls
+    if (game::mouse_down_[0]) {
+        glm::vec2 delta = game::mouse_pos_ - game::mouse_pos_prev_;
+        glm::mat4 m = myCamera->arcballRotation
+            (game::mouse_pos_prev_, game::mouse_pos_);
+        myCamera->transform(m);
+    }
 }

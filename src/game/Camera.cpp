@@ -54,8 +54,29 @@ void Camera::persp(GLfloat fov, GLfloat aspect, GLfloat n, GLfloat f) {
     proj_[3][2] = - (2 * f * n) / (f - n);
 }
 
-glm::mat4 Camera::getViewMatrix() {
-    return transform_i();
+glm::vec3 Camera::arcballVector(glm::vec2 p) {
+    glm::vec4 out = glm::vec4(glm::clamp(p.x, -1.f, 1.f),
+                              glm::clamp(p.y, -1.f, 1.f), 0, 0);
+    GLfloat p_squared = glm::dot(p, p);
+    if (p_squared <= 1)
+        out.z = glm::sqrt(1 - p_squared);
+    else
+        out = glm::normalize(out);
+    return glm::vec3(transform() * out);
+}
+
+glm::mat4 Camera::arcballRotation(glm::vec2 p1, glm::vec2 p2) {
+    glm::vec3 r1 = glm::normalize(arcballVector(p1));
+    glm::vec3 r2 = glm::normalize(arcballVector(p2));
+    GLfloat angle = glm::acos(std::min(1.f, glm::dot(r1, r2))) * 180 / M_PI;
+    if (glm::equal(r1, r2)[0] && glm::equal(r1, r2)[1])
+        return glm::mat4(1);
+    glm::vec3 axis = glm::cross(r1, r2);
+
+    rotate(angle, -axis, glm::vec3(0, 0, 0));
+    glm::mat4 trans = transform();
+    rotate(angle, axis, glm::vec3(0, 0, 0));
+    return trans * transform_i();
 }
 
 }
