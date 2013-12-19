@@ -23,8 +23,8 @@ public:
     glm::mat4 getProjectionMatrix() { return proj_; }
     glm::mat4 getViewMatrix() { return transform_i(); }
 
-    glm::vec3 arcballVector(glm::vec2 p);
-    glm::mat4 arcballRotation(glm::vec2 p1, glm::vec2 p2);
+    glm::vec3 arcballVector(glm::vec2 p, glm::vec3 off);
+    glm::mat4 arcballRotation(glm::vec2 p1, glm::vec2 p2, glm::vec3 off);
 };
 
 }
