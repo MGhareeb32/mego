@@ -1,6 +1,6 @@
 #include "MtlLoader.h"
 #include <GL/glew.h>
-#include "libextrnal/SOIL.h"
+#include "../../../include/soil/libextrnal/SOIL.h"
 using namespace std;
 namespace game {
 namespace MtlLoader {
