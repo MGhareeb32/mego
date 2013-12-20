@@ -1,8 +1,9 @@
 #include "CubeWorld.h"
+#include "../../game/Grid.h"
 using namespace std;
 
 CubeWorld::CubeWorld() {
-    game::sceneColorSet(glm::vec3(0.2f, 0.2f, 0.2f));
+	game::sceneColorSet(glm::vec3(0.2f, 0.2f, 0.2f));
     game::fogSet(glm::vec4(0.1f, 0.1f, 0.1f, 1.f), .1f);
     cam_ = new game::Camera();
     game::cameraSet(cam_);
@@ -12,15 +13,24 @@ CubeWorld::CubeWorld() {
     scale(glm::vec3(.5f, .5f, .5f));
     // obj
     std::ifstream input("res/cubeworld/map.in");
-    int xlength, ylength, zlength;
-    input >> xlength >> ylength >> zlength;
+    int xlen,ylen,zlen;
+    input >> xlen >> ylen >> zlen;
+    cout << " size " << xlen << " " << ylen << " " << zlen << endl;
+    Grid::setGridSize(xlen, ylen, zlen);
+    // initialize map with -1
+    for(int i =0;i < 100;i++)
+    	for(int j =0 ;j  < 100;j++)
+    		for(int k =0 ;k < 100;k++)
+    			Grid::editGridMap(i,j,k,0);
     int nextBlock = 0;
-    for (int z = 0; z < zlength; z++) {
-        for (int x = 0; x < xlength; x++)
-            for (int y = 0; y < ylength; y++) {
-                int exist;
-                input >> exist;
-                if (exist) {
+    for (int z = 0; z < zlen; z++) {
+        for (int x = 0; x < xlen; x++)
+            for (int y = 0; y < ylen; y++) {
+                int val;
+            	input >> val;
+            	Grid::editGridMap(x,y,z,val);
+                // TODO add target
+                if (val) {
                     game::MeshEntity *newEntity
                         = new game::MeshEntity("res/cubeworld/box.obj",
                                                "res/cubeworld/box.mtl",
@@ -29,7 +39,7 @@ CubeWorld::CubeWorld() {
                     name.append(1, (nextBlock++) + '0');
                     addChild(name, newEntity);
                     newEntity->scale(glm::vec3(.1f, .1f, .1f));
-                    newEntity->translate(glm::vec3(x * .2f, y * .2f, z * .2f));
+                    newEntity->translate(glm::vec3(x * Grid::getGridDelta(), y * Grid::getGridDelta(), z * Grid::getGridDelta()));
                     map_entities_.push_back(newEntity);
                 }
             }
@@ -65,15 +75,25 @@ void CubeWorld::update() {
         myCamera->rotate(+speed, myCamera->n());
     if (game::key_down_['e'])
         myCamera->rotate(-speed, myCamera->n());
+
     if (game::key_down_['a'])
-        myCamera->translate(-speed * myCamera->u() * .05f);
+        myCamera->movePlayer(-speed * myCamera->u() * .05f);
     if (game::key_down_['d'])
-        myCamera->translate(+speed * myCamera->u() * .05f);
+        myCamera->movePlayer(+speed * myCamera->u() * .05f);
     if (game::key_down_['w'])
-        myCamera->translate(-speed * myCamera->n() * .05f);
+        myCamera->movePlayer(-speed * myCamera->n() * .05f);
     if (game::key_down_['s'])
-        myCamera->translate(+speed * myCamera->n() * .05f);
+        myCamera->movePlayer(+speed * myCamera->n() * .05f);
+
+    if(game::key_down_['j'])
+        myCamera->jump();
+
+    // Gravity
+
+    myCamera->moveDown(speed);
+
     // fps controls
     glm::vec2 delta = game::mouse_pos_ - game::mouse_pos_prev_;
+    // TODO check if transform use translate
     myCamera->transform(myCamera->fpsRotation(speed * delta, GL_FALSE));
 }

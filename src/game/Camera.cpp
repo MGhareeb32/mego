@@ -1,10 +1,13 @@
 #include "Camera.h"
 
+using namespace std;
 namespace game {
 
 Camera::Camera() : Entity() {
-    ortho();
+	jumpCount =0;
+	ortho();
     lookAt(glm::vec3(3, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
+//    translate(-o());
 }
 
 Camera::~Camera() {
@@ -97,4 +100,68 @@ glm::mat4 Camera::fpsRotation(glm::vec2 delta, GLboolean flipY) {
     return trans * transform_i();
 }
 
+void Camera::jump(){
+	jumpCount = 5;
+}
+
+void Camera::moveDown(GLfloat speed){
+	if(jumpCount > 0)
+	{
+		speed *= -1.0f;
+		--jumpCount;
+	}
+//	glm::vec4 tmp = (transform()*glm::vec4(0.0f ,0.0f  , -1.0f ,0.0f));
+//	glm::vec3 zAxis(tmp[0], tmp[1], tmp[2]);
+	glm::vec3 zAxis(0.0f, 0.0f, 1.0f);
+
+    // gravity .. move down
+    movePlayer(-speed * zAxis* .05f);
+
+}
+
+bool invalidPos(int x,int y,int z){
+	return x < 0 || x >= Grid::getGridX() || y < 0 || y
+				>= Grid::getGridY() || z < 0 || z >= Grid::getGridZ()
+				|| Grid::getGridMapAt(x, y, z) == 1;
+}
+
+
+void Camera::movePlayer(glm::vec3 d) {
+	cout <<" camera pos " << o() << endl;
+	int curXPos = (int) ((o()[0] + Grid::getGridDelta() / 2.0f)
+			/ Grid::getGridDelta());
+	int curYPos = (int) ((o()[1] + Grid::getGridDelta() / 2.0f)
+			/ Grid::getGridDelta());
+	int curZPos = (int) ((o()[2] + Grid::getGridDelta() / 2.0f)
+			/ Grid::getGridDelta());
+
+
+	int nextXPos = (int) ((o()[0] + Grid::getGridDelta() / 2.0f + d[0])
+			/ Grid::getGridDelta());
+	int nextYPos = (int) ((o()[1] + Grid::getGridDelta() / 2.0f + d[1])
+			/ Grid::getGridDelta());
+	int nextZPos = (int) ((o()[2] + Grid::getGridDelta() / 2.0f + d[2])
+			/ Grid::getGridDelta());
+
+	cout << " player at pos " << curXPos << " " << curYPos<< " " << curZPos<< endl;
+	cout << " player at pos " << nextXPos << " " << nextYPos<< " " << nextZPos<< endl;
+	cout << " ----------- " << endl;
+	if (invalidPos(nextXPos, nextYPos, nextZPos))
+	{
+//		if (invalidPos(curXPos, curYPos, curZPos)) {
+			cout << " invalid position" << endl;
+//			translate(-d);
+//		}
+	}
+	else{
+		cout << " valid ! " << endl;
+	translate(d);
+	}
+	if(o()[2] < 0){
+		// make the 0 lower bound
+		translate(glm::vec3(0.0f,0.0f,-o()[2]));
+	}
+
+	// TODO make valid method
+}
 }

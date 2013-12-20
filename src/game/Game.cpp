@@ -44,6 +44,7 @@ GLint global_time_;
 game::Entity* scene_;
 game::Camera* camera_;
 
+
 // SCREEN
 
 void mouseLock(GLboolean l) {

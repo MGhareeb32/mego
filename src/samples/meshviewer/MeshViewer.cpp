@@ -70,7 +70,7 @@ void MeshViewer::update() {
     if (game::key_down_['w'])
         myCamera->translate(-speed * myCamera->n() * .05f);
     if (game::key_down_['s'])
-        myCamera->translate(+speed * myCamera->n() * .05f);
+        myCamera->movePlayer(+speed * myCamera->n() * .05f);
     // fps controls
     glm::vec2 delta = game::mouse_pos_ - game::mouse_pos_prev_;
     myCamera->transform(myCamera->fpsRotation(speed * delta, GL_FALSE));

@@ -36,7 +36,6 @@ extern void fogSet(glm::vec4 color, GLfloat mag);
 
 void init(int argc, char **argv, GLint w, GLint h, std::string t);
 void start(GLint f);
-
 }
 
 #endif

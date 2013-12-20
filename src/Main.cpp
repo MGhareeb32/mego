@@ -10,6 +10,7 @@ const GLfloat DISPLAY_FPS = 30;
 int main(int argc, char **argv) {
     game::init(argc, argv, DISPLAY_WIDTH, DISPLAY_HEIGHT, "");
     game::sceneSet(new CubeWorld());
+//    game::sceneSet(new MeshViewer());
     game::start(DISPLAY_FPS);
     return 0;
 }
