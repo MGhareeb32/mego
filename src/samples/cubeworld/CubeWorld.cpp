@@ -8,33 +8,45 @@ CubeWorld::CubeWorld() {
     game::cameraSet(cam_);
     cam_->persp();
     game::mouseLock(GL_TRUE);
-    glutSetCursor(GLUT_CURSOR_NONE);
-    // room
-    room_entity_ = new game::MeshEntity("res/viewer/room.obj",
-                                        "res/viewer/room.mtl",
-                                        "res/viewer/room.png");
-    addChild("room", room_entity_);
+    // axes
+    scale(glm::vec3(.5f, .5f, .5f));
     // obj
-    obj_entity_ = new game::MeshEntity("res/viewer/batman.obj",
-                                       "res/viewer/batman.mtl",
-                                       "res/viewer/batman.png");
-    addChild("obj", obj_entity_);
-    obj_entity_->rotate(90, glm::vec3(1, 0, 0));
-    obj_entity_->rotate(-45, glm::vec3(0, 0, 1));
-    obj_entity_->scale(glm::vec3(.7f, .7f, .7f));
-    // light
-    for (int i = 0; i < N_LIGHT; ++i) {
-        light_entity_[i] = new game::MeshEntity("res/viewer/gem.obj",
-                                                "res/viewer/gem.mtl");
-        const char *name[] = {"1", "2", "3", "4"};
-        addChild(name[i], light_entity_[i] );
-        light_[i] = new game::Light();
-        game::lights.push_back(light_[i]);
-        light_entity_[i]->addChild("light", light_[i]);
-        light_entity_[i]->scale(glm::vec3(.05f, .05f, .05f));
-        light_entity_[i]->translate(glm::vec3(.8f, .6f, .4f));
-        light_entity_[i]->rotate(60 * i, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
+    std::ifstream input("res/cubeworld/map.in");
+    int xlength, ylength, zlength;
+    input >> xlength >> ylength >> zlength;
+    int nextBlock = 0;
+    for (int z = 0; z < zlength; z++) {
+        for (int x = 0; x < xlength; x++)
+            for (int y = 0; y < ylength; y++) {
+                int exist;
+                input >> exist;
+                if (exist) {
+                    game::MeshEntity *newEntity
+                        = new game::MeshEntity("res/cubeworld/box.obj",
+                                               "res/cubeworld/box.mtl",
+                                               "res/cubeworld/box.png");
+                    string name = "newEntity_";
+                    name.append(1, (nextBlock++) + '0');
+                    addChild(name, newEntity);
+                    newEntity->scale(glm::vec3(.1f, .1f, .1f));
+                    newEntity->translate(glm::vec3(x * .2f, y * .2f, z * .2f));
+                    map_entities_.push_back(newEntity);
+                }
+            }
     }
+    for (size_t i = 0; i < map_entities_.size(); i++)
+        cout << map_entities_[i]->o() << endl;
+    // light
+    light_ = new game::Light(glm::vec3(1));
+    addChild("light", light_);
+    game::lights.push_back(light_);
+    //
+    light_entity_ = new game::MeshEntity("res/cubeworld/gem.obj",
+                                         "res/cubeworld/gem.mtl",
+                                         "res/cubeworld/gem.png");
+    light_entity_->scale(glm::vec3(.05f, .05f, .05f));
+    light_->addChild("light", light_entity_);
+    light_->translate(glm::vec3(1.f, .5f, 0.f));
 }
 
 CubeWorld::~CubeWorld() {
@@ -42,17 +54,11 @@ CubeWorld::~CubeWorld() {
 
 void CubeWorld::update() {
     GLfloat speed = game::key_down_[' '] * 3 + 2;
-    // obj
-    if (game::key_down_['b'])
-        obj_entity_->rotate(+speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
-    if (game::key_down_['n'])
-        obj_entity_->rotate(-speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
-
     // light
     if (game::key_down_['c'])
-        light_entity_[0]->rotate(+speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
+        light_entity_->rotate(+speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
     if (game::key_down_['v'])
-        light_entity_[0]->rotate(-speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
+        light_entity_->rotate(-speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
     // camera
     game::Camera* myCamera = game::cameraGet();
     if (game::key_down_['q'])
