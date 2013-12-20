@@ -1,6 +1,5 @@
 #include "MtlLoader.h"
-#include <GL/glew.h>
-#include "../../../include/soil/libextrnal/SOIL.h"
+
 using namespace std;
 namespace game {
 namespace MtlLoader {
@@ -71,13 +70,13 @@ unsigned char* raedimage(const char * imagepath) {
     return data;
 }
 
-Material *load(std::string fname) {
+Material *load(std::string fname, std::string dir) {
     std::fstream in;
     in.open(fname.c_str(), std::fstream::in);
     //
     GLfloat ns, ni, tr, lum;
     glm::vec3 ka, kd, ks;
-    std::string type, txtureFile = "res/mesh/viewer/";
+    std::string type, textureFile = dir;
     while (in >> type) {
         if (!type.compare("Ns")) {
             in >> ns;
@@ -96,43 +95,14 @@ Material *load(std::string fname) {
         } else if (!type.compare("map_Kd")) {
             string tmp;
             in >> tmp;
-            txtureFile.append(tmp.c_str());
+            textureFile.append(tmp.c_str());
         } else {
             getline(in, type);
         }
     }
     in.close();
 
-    cout << "file " << txtureFile << endl;
-    // Load textures
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-
-    int width, height;
-    unsigned char* image;
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-//    std::cout << height  << " " << width <<  " ... " << std::endl;
-    image = SOIL_load_image(txtureFile.c_str(), &width, &height, 0,
-            SOIL_LOAD_RGB);
-    //    image = raedimage(txtureFile.c_str());
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-            GL_UNSIGNED_BYTE, image);
-    std::cout << height  << " " << width <<  " ... " << std::endl;
-//    for (int i = 0; i < height; i++) {
-//        for (int j = 0; j < width; j++)
-//            std::cout << image[height * i + j];
-//        std::cout << std::endl;
-//    }
-    SOIL_free_image_data(image);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    return new Material(fname, ka, kd, ks, ns, tr, textureID);
+    return new Material(fname, ka, kd, ks, ns, tr, textureFile);
 }
 
 }

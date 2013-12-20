@@ -78,15 +78,16 @@ void mtlSet(Material* mtl) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mtl->textureID());
     // Set our "myTextureSampler" sampler to user Texture Unit 0
-//    std::cout << mtl->textureID() << std::endl;
     glUniform1i(unifrom_texture, 0);
 }
 
 // LIGHT
 
 void lightSet(int idx, Light* l) {
-    glm::mat4 a = glm::mat4(glm::vec4(l->o(), 0), glm::vec4(l->ambient(), 0),
-            glm::vec4(l->diffuse(), 0), glm::vec4(l->specular(), 0));
+    glm::mat4 a = glm::mat4(glm::vec4(l->o(), 0),
+                            glm::vec4(l->ambient(), 0),
+                            glm::vec4(l->diffuse(), 0),
+                            glm::vec4(l->specular(), 0));
     glUniformMatrix4fv(unifrom_lights_[idx], 1, GL_FALSE, &a[0][0]);
 }
 
@@ -122,8 +123,8 @@ Camera* cameraGet() {
 
 void init() {
     // shader program
-    GLuint program =
-            Angel::InitShader("glsl/vshader.glsl", "glsl/fshader.glsl");
+    GLuint program = Angel::InitShader("glsl/vshader.glsl",
+                                       "glsl/fshader.glsl");
     glUseProgram(program);
     // uniform mat4 model, view, proj;
     unifrom_model_matrix_ = glGetUniformLocation(program, "model");
@@ -153,9 +154,10 @@ void init() {
     unifrom_blend_color_ = glGetUniformLocation(program, "blend_color");
     // uniform glm::vec3 blend_factor;
     unifrom_blend_factor_ = glGetUniformLocation(program, "blend_factor");
-    std::cout << "uniforms loaded" << std::endl;
-
+    // uniform sampler2D myTextureSampler;
     unifrom_texture = glGetUniformLocation(program, "myTextureSampler");
+
+    std::cout << "uniforms loaded" << std::endl;
 
     // controls
     for (int i = 0; i < 3; ++i)
@@ -202,12 +204,12 @@ void mouseButton(GLint mouseBtn, GLint isRelease, GLint x, GLint y) {
 void display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
-    game::setUniformBlendColor(glm::vec4(1, 1, 1, 1), glm::vec4(0.f, 0.f, 0.f,
-            0.f));
+    game::setUniformBlendColor(glm::vec4(1, 1, 1, 1),
+                               glm::vec4(0.f, 0.f, 0.f, 0.f));
 
     if (camera_)
-        setUniformViewMatrix(camera_->getViewMatrix()), setUniformProjMatrix(
-                camera_->getProjectionMatrix());
+        setUniformViewMatrix(camera_->getViewMatrix()),
+        setUniformProjMatrix(camera_->getProjectionMatrix());
     for (int i = 0; i < lights.size(); ++i)
         lightSet(i, lights[i]);
     if (scene_)

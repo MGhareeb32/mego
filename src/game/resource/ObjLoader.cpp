@@ -3,7 +3,7 @@
 namespace game {
 namespace ObjLoader {
 
-game::Mesh *load(std::string fname) {
+game::Mesh *load(std::string fname, std::string dir) {
     std::fstream in;
     in.open(fname.c_str(), std::fstream::in);
     //

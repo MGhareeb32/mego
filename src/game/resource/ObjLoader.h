@@ -10,7 +10,7 @@
 namespace game {
 namespace ObjLoader {
 
-game::Mesh *load(std::string fname);
+game::Mesh *load(std::string fname, std::string dir);
 
 }
 }

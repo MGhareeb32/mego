@@ -6,11 +6,12 @@
 
 #include "../OpenGL.h"
 #include "Material.h"
+#include "libexternal/SOIL.h"
 
 namespace game {
 namespace MtlLoader {
 
-Material *load(std::string fname);
+Material *load(std::string fname, std::string dir);
 
 }
 }

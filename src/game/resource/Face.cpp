@@ -17,24 +17,24 @@ Face::Face(int vertexCount, glm::vec3 *vertex, glm::vec2 *uvmap,
 
     // position
     glBindBuffer(GL_ARRAY_BUFFER, vbo_[attr_idx]);
-    glBufferData(GL_ARRAY_BUFFER, nVertex_ * sizeof(glm::vec3), vertex,
-            GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,
+                 nVertex_ * sizeof(glm::vec3), vertex, GL_STATIC_DRAW);
     glEnableVertexAttribArray(attr_idx);
     glVertexAttribPointer(attr_idx, 3, GL_FLOAT, GL_FALSE, 0, 0);
     attr_idx++;
 
     // normal
     glBindBuffer(GL_ARRAY_BUFFER, vbo_[attr_idx]);
-    glBufferData(GL_ARRAY_BUFFER, nVertex_ * sizeof(glm::vec3), normal,
-            GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,
+                 nVertex_ * sizeof(glm::vec3), normal, GL_STATIC_DRAW);
     glEnableVertexAttribArray(attr_idx);
     glVertexAttribPointer(attr_idx, 3, GL_FLOAT, GL_FALSE, 0, 0);
     attr_idx++;
 
     // texture
     glBindBuffer(GL_ARRAY_BUFFER, vbo_[attr_idx]);
-    glBufferData(GL_ARRAY_BUFFER, nVertex_ * sizeof(glm::vec2), uvmap,
-            GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,
+                 nVertex_ * sizeof(glm::vec2), uvmap, GL_STATIC_DRAW);
     glEnableVertexAttribArray(attr_idx);
     glVertexAttribPointer(attr_idx, 2, GL_FLOAT, GL_FALSE, 0, 0);
     attr_idx++;

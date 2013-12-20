@@ -41,10 +41,10 @@ Resource* load(std::string file) {
     Resource* out = NULL;
     // OBJ
     if (!extension.compare("obj"))
-        out = ObjLoader::load(file);
+        out = ObjLoader::load(file, dir);
     // MTL
     else if (!extension.compare("mtl"))
-        out = MtlLoader::load(file);
+        out = MtlLoader::load(file, dir);
     // add to map
     resources_[out->uid()] = out;
     return out;
