@@ -102,7 +102,7 @@ Material *load(std::string fname, std::string dir) {
     }
     in.close();
 
-    return new Material(fname, ka, kd, ks, ns, tr, textureFile);
+    return new Material(fname, ka, kd, ks, ns, tr);
 }
 
 }

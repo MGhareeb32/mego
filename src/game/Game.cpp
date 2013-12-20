@@ -30,6 +30,7 @@ GLint unifrom_lights_[NUM_LIGHTS];
 
 GLint unifrom_mtl_ka_, unifrom_mtl_kd_, unifrom_mtl_ks_;
 GLint unifrom_mtl_ns_, unifrom_mtl_tr_;
+GLint unifrom_texture_flag_;
 
 GLint unifrom_blend_color_, unifrom_blend_factor_ , unifrom_texture;
 
@@ -74,11 +75,16 @@ void mtlSet(Material* mtl) {
     glUniform1f(unifrom_mtl_ns_, mtl->ns());
     glUniform1f(unifrom_mtl_tr_, mtl->tr());
     // set texture
-    // Bind our texture in Texture Unit 0
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, mtl->textureID());
-    // Set our "myTextureSampler" sampler to user Texture Unit 0
-    glUniform1i(unifrom_texture, 0);
+    if (mtl->texture()) {
+        glUniform1i(unifrom_texture_flag_, 1);
+        // Bind our texture in Texture Unit 0
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, mtl->texture()->textureID());
+        // Set our "myTextureSampler" sampler to user Texture Unit 0
+        glUniform1i(unifrom_texture, 0);
+    } else {
+        glUniform1i(unifrom_texture_flag_, 0);
+    }
 }
 
 // LIGHT
@@ -144,12 +150,14 @@ void init() {
         l->~Light();
     }
     // uniform vec3 ka, kd, ks;
+    // uniform float ns, tr;
+    // uniform bool texture_flag;
     unifrom_mtl_ka_ = glGetUniformLocation(program, "ka");
     unifrom_mtl_kd_ = glGetUniformLocation(program, "kd");
     unifrom_mtl_ks_ = glGetUniformLocation(program, "ks");
-    // uniform float ns, tr;
     unifrom_mtl_ns_ = glGetUniformLocation(program, "ns");
     unifrom_mtl_tr_ = glGetUniformLocation(program, "tr");
+    unifrom_texture_flag_ = glGetUniformLocation(program, "texture_flag");
     // uniform glm::vec3 blend_color;
     unifrom_blend_color_ = glGetUniformLocation(program, "blend_color");
     // uniform glm::vec3 blend_factor;

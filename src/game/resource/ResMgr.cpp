@@ -45,6 +45,9 @@ Resource* load(std::string file) {
     // MTL
     else if (!extension.compare("mtl"))
         out = MtlLoader::load(file, dir);
+    // IMG
+    else
+        out = TextureLoader::load(file, dir);
     // add to map
     resources_[out->uid()] = out;
     return out;

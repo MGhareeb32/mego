@@ -10,6 +10,7 @@ uniform mat4 lights[NUM_LIGHTS];
 
 uniform vec3 ka, kd, ks;
 uniform float ns, tr;
+uniform bool texture_flag;
 
 uniform vec4 blend_color;
 uniform vec4 blend_factor;
@@ -17,7 +18,6 @@ uniform vec4 blend_factor;
 in mat4 modelView;
 in vec3 fPos;
 in vec3 fNormal;
-
 
 in vec2 UV;
 
@@ -42,7 +42,7 @@ vec3 hsv2rgb(vec3 c) {
 
 void main() {
     // TEXTURES
-    vec4 tex = texture2D(myTextureSampler, UV);
+    vec4 tex = texture_flag ? texture2D(myTextureSampler, UV) : vec4(1);
 
     // LIGHT
     vec3 afterLight = scene_color;
@@ -50,8 +50,6 @@ void main() {
     vec3 fE = -fPos;
     vec3 N = normalize(fN);
     vec3 E = vec3(0, 0, 1);
-    if (dot(N, E) < 0)
-        discard;
     for (int i = 0; i < NUM_LIGHTS; ++i) {
         vec3 fL = (view * vec4(lights[i][0].xyz, 0)).xyz;
     

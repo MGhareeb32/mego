@@ -10,68 +10,24 @@ MeshViewer::MeshViewer() {
     cam_ = new game::Camera();
     cam_->persp();
     game::cameraSet(cam_);
-    // load
-    obj_mesh_ = (game::Mesh*)game::ResMgr::load
-        ("res/mesh/viewer/box.obj");
-    obj_mtl_ = (game::Material*)game::ResMgr::load
-        ("res/mesh/viewer/box.mtl");
-    axes_mesh_ = (game::Mesh*)game::ResMgr::load
-        ("res/mesh/viewer/room.obj");
-    axes_mtl_ = (game::Material*)game::ResMgr::load
-        ("res/mesh/viewer/room.mtl");
-    light_mesh_ = (game::Mesh*)game::ResMgr::load
-        ("res/mesh/viewer/gem.obj");
-    light_mtl_ = (game::Material*)game::ResMgr::load
-        ("res/mesh/viewer/gem.mtl");
-    // axes
-    set_mesh(axes_mesh_);
-    set_mtl(axes_mtl_);
-    scale(glm::vec3(.5f, .5f, .5f));
+    // room
+    room_entity_ = new game::MeshEntity("res/mesh/viewer/room.obj",
+                                       "res/mesh/viewer/room.mtl");
+    addChild("room", room_entity_);
     // obj
-//    obj_entity_ = new game::MeshEntity(obj_mesh_);
-//    obj_entity_->set_mtl(obj_mtl_);
-//    addChild("obj", obj_entity_);
-//    obj_entity_->scale(glm::vec3(.25f, .25f, .25f));
-    // TODO load map entities
-    map_entities_ = new std::vector<game::MeshEntity>();
-    map_entities_->clear();
-    std::ifstream input("res/mesh/viewer/map.in");
-    int xlength, ylength, zlength;
-    input >> xlength >> ylength>> zlength;
-//    std::cout << xlength << " " << ylength <<  " " << zlength << std::endl;
-    int nextBlock = 0;
-    for(int z =0;z < zlength;z++){
-        for(int x =0;x < xlength;x++)
-            for(int y = 0;y < ylength;y++)
-            {
-                int exist;
-                input >> exist;
-                if(exist)
-                {
-                    game::MeshEntity *newEntity = new game::MeshEntity(obj_mesh_);
-                    newEntity->set_mtl(obj_mtl_);
-                    string name = "newEntity_";
-                    name.append(1, (nextBlock++)+'0');
-                    addChild(name, newEntity);
-                    newEntity->scale(glm::vec3(.1f, .1f, .1f));
-//                    cout << " draw at " << x << " " << y << " " <<z << endl;
-                    newEntity->translate(glm::vec3(x*.2f, y*.2f, z*.2f));
-                    map_entities_->push_back(*newEntity);
-                }
-            }
-    }
-    for (int i = 0; i < map_entities_->size(); i++)
-        cout << (*map_entities_)[i].o() << endl;
+    obj_entity_ = new game::MeshEntity("res/mesh/viewer/teapot.obj",
+                                       "res/mesh/viewer/teapot.mtl");
+    addChild("obj", obj_entity_);
+    obj_entity_->scale(glm::vec3(.4f, .4f, .4f));
     // light
+    light_entity_ = new game::MeshEntity("res/mesh/viewer/gem.obj",
+                                         "res/mesh/viewer/gem.mtl");
+    addChild("light_mesh", light_entity_);
     light_ = new game::Light(glm::vec3(10));
-    addChild("light", light_);
-    game::lights.push_back(light_);
-    //
-    light_entity_= new game::MeshEntity(light_mesh_);
-    light_entity_->set_mtl(light_mtl_);
+    light_entity_->addChild("light", light_);
     light_entity_->scale(glm::vec3(.05f, .05f, .05f));
-    light_->addChild("light", light_entity_);
-    light_->translate(glm::vec3(1.f, .5f, 0.f));
+    light_entity_->translate(glm::vec3(1.f, .5f, .25f));
+    game::lights.push_back(light_);
 }
 
 MeshViewer::~MeshViewer() {
@@ -93,9 +49,9 @@ void MeshViewer::update() {
 
     // light
     if (game::key_down_['c'])
-        light_->rotate(+speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
+        light_entity_->rotate(+speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
     if (game::key_down_['v'])
-        light_->rotate(-speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
+        light_entity_->rotate(-speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
     // camera
     game::Camera* myCamera = game::cameraGet();
     if (game::key_down_['w'])
