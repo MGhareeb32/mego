@@ -6,7 +6,7 @@
 
 #include "../OpenGL.h"
 #include "Material.h"
-#include "libexternal/SOIL.h"
+#include "../../../include/soil/SOIL.h"
 
 namespace game {
 namespace MtlLoader {

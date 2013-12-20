@@ -28,7 +28,7 @@ RubixCube::RubixCube() {
 
 RubixCube::~RubixCube() {
     std::vector<std::string> ch = childrenNames();
-    for (int i = 0; i < ch.size(); ++i) {
+    for (std::size_t i = 0; i < ch.size(); ++i) {
         game::Entity* c = getChild(ch[i]);
         removeChild(ch[i]);
         c->~Entity();
@@ -93,7 +93,7 @@ void RubixCube::select(int axis, GLfloat n) {
     std::vector<std::string> v = childrenNames();
     // de-select
     if (axis == -1) {
-        for (int i = 0; i < v.size(); ++i)
+        for (std::size_t i = 0; i < v.size(); ++i)
             *((SmallCube*)getChild(v[i]))->selected() = false;
     }
     // select
@@ -104,7 +104,7 @@ void RubixCube::select(int axis, GLfloat n) {
         // check
         std::set<SmallCube*> good;
         bool can = true;
-        for (int i = 0; i < v.size() && can; ++i) {
+        for (std::size_t i = 0; i < v.size() && can; ++i) {
             SmallCube* ch = (SmallCube*)getChild(v[i]);
             glm::vec3 org = ch->o();
             can = abs(ch->spin_ang()) < EPS;
@@ -113,7 +113,7 @@ void RubixCube::select(int axis, GLfloat n) {
         }
         // select
         if (can)
-            for (int i = 0; i < v.size(); ++i)
+            for (std::size_t i = 0; i < v.size(); ++i)
                 if (good.find((SmallCube*)getChild(v[i])) != good.end())
                     *((SmallCube*)getChild(v[i]))->selected() = true,
                     ((SmallCube*)getChild(v[i]))->set_spin_axis(axes[axis]);
@@ -127,13 +127,12 @@ void RubixCube::spin(GLfloat ang) {
     std::vector<std::string> v = childrenNames();
     std::set<SmallCube*> good;
     bool can = true;
-    for (int i = 0; i < v.size() && can; ++i) {
+    for (std::size_t i = 0; i < v.size() && can; ++i) {
         SmallCube* ch = (SmallCube*)getChild(v[i]);
-        glm::vec3 org = ch->o();
         can = abs(ch->spin_ang()) < EPS;
     }
     if (can)
-        for (int i = 0; i < v.size(); ++i)
+        for (std::size_t i = 0; i < v.size(); ++i)
             if (*((SmallCube*)getChild(v[i]))->selected())
                 ((SmallCube*)getChild(v[i]))->set_spin_ang(ang);
 }

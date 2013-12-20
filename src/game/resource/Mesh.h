@@ -12,14 +12,14 @@ class Mesh : public Resource {
 public:
     Mesh(std::string uid) : Resource(uid) {};
     ~Mesh() {
-        for (int i = 0; i < faces.size(); ++i)
+        for (std::size_t i = 0; i < faces.size(); ++i)
             faces[i]->~Face();
     }
 
     void addFace(Face *f) { faces.push_back(f); }
     void render(glm::mat4 transformation) {
         game::setUniformModelMatrix(transformation);
-        for (int i = 0; i < faces.size(); ++i)
+        for (std::size_t i = 0; i < faces.size(); ++i)
             faces[i]->render();
     }
 };

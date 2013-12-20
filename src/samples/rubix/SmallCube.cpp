@@ -41,13 +41,13 @@ void SmallCube::update() {
         spin_ang_ = 0;
     }
     std::vector<std::string> ch = childrenNames();
-    for (int i = 0; i < ch.size(); ++i)
+    for (std::size_t i = 0; i < ch.size(); ++i)
         ((CubeFace*)getChild(ch[i]))->update();
 }
 
 void SmallCube::render() {
     std::vector<std::string> ch = childrenNames();
-    for (int i = 0; i < ch.size(); ++i)
+    for (std::size_t i = 0; i < ch.size(); ++i)
         ((CubeFace*)getChild(ch[i]))->render(selected_);
 }
 

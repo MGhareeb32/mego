@@ -3,7 +3,7 @@
 
 #include "../Internal.h"
 #include "Resource.h"
-#include "libexternal/SOIL.h"
+#include "../../../include/soil/SOIL.h"
 
 namespace game {
 
