@@ -41,27 +41,27 @@ MeshViewer::MeshViewer() {
 //    std::cout << xlength << " " << ylength <<  " " << zlength << std::endl;
     int nextBlock = 0;
     for(int z =0;z < zlength;z++){
-    	for(int x =0;x < xlength;x++)
-    		for(int y = 0;y < ylength;y++)
-    		{
-    			int exist;
-    			input >> exist;
-    			if(exist)
-    			{
-    			    game::MeshEntity *newEntity = new game::MeshEntity(obj_mesh_);
-    			    newEntity->set_mtl(obj_mtl_);
-    			    string name = "newEntity_";
-    			    name.append(1, (nextBlock++)+'0');
-    			    addChild(name, newEntity);
-    			    newEntity->scale(glm::vec3(.1f, .1f, .1f));
-//    			    cout << " draw at " << x << " " << y << " " <<z << endl;
-    			    newEntity->translate(glm::vec3(x*.2f, y*.2f, z*.2f));
-    				map_entities_->push_back(*newEntity);
-    			}
-    		}
+        for(int x =0;x < xlength;x++)
+            for(int y = 0;y < ylength;y++)
+            {
+                int exist;
+                input >> exist;
+                if(exist)
+                {
+                    game::MeshEntity *newEntity = new game::MeshEntity(obj_mesh_);
+                    newEntity->set_mtl(obj_mtl_);
+                    string name = "newEntity_";
+                    name.append(1, (nextBlock++)+'0');
+                    addChild(name, newEntity);
+                    newEntity->scale(glm::vec3(.1f, .1f, .1f));
+//                    cout << " draw at " << x << " " << y << " " <<z << endl;
+                    newEntity->translate(glm::vec3(x*.2f, y*.2f, z*.2f));
+                    map_entities_->push_back(*newEntity);
+                }
+            }
     }
     for (int i = 0; i < map_entities_->size(); i++)
-		cout << (*map_entities_)[i].o() << endl;
+        cout << (*map_entities_)[i].o() << endl;
     // light
     light_ = new game::Light(glm::vec3(10));
     addChild("light", light_);
@@ -89,7 +89,7 @@ void MeshViewer::update() {
 //    if (game::key_down_['z'])
 //        obj_entity_->rotate(-speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
 
-	// TODO map entities
+    // TODO map entities
 
     // light
     if (game::key_down_['c'])
@@ -119,8 +119,8 @@ void MeshViewer::update() {
         myCamera->translate(myCamera->u() * .1f);
     // move camera
     if (game::key_down_['W'])
-		myCamera->translate(-myCamera->n() * .1f);
-	if (game::key_down_['S'])
-		myCamera->translate(myCamera->n() * .1f);
+        myCamera->translate(-myCamera->n() * .1f);
+    if (game::key_down_['S'])
+        myCamera->translate(myCamera->n() * .1f);
 
 }

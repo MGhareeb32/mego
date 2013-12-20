@@ -18,8 +18,8 @@ void main() {
     modelView = view * model;
     mat4 normal = inverse(transpose(modelView));
 
-	fPos = (modelView * vec4(vPos, 1.f)).xyz;
-	fNormal = vNormal;
+    fPos = (modelView * vec4(vPos, 1.f)).xyz;
+    fNormal = vNormal;
 
     gl_Position = proj * vec4(fPos, 1);
     UV = vertexUV;

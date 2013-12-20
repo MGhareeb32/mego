@@ -41,7 +41,9 @@ vec3 hsv2rgb(vec3 c) {
 }
 
 void main() {
-        
+    // TEXTURES
+    vec4 tex = texture2D(myTextureSampler, UV);
+
     // LIGHT
     vec3 afterLight = scene_color;
     vec3 fN = (modelView * vec4(fNormal, 0)).xyz;
@@ -61,8 +63,8 @@ void main() {
         vec3 specular = lights[i][3].xyz * ks * pow(max(dot(N, H), 0), ns);
 
         afterLight += (ambient + diffuse);
-    	afterLight *= texture2D(myTextureSampler, UV);
-    	afterLight += specular;
+        afterLight *= tex.xyz;
+        afterLight += specular;
     }
     
     
