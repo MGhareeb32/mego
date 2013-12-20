@@ -1,8 +1,8 @@
 #include "RubixCube.h"
 
 RubixCube::RubixCube() {
-    rubix = (game::Mesh*)game::ResMgr::load("res/mesh/rubix/rubix-face.obj");
-    flat = (game::Mesh*)game::ResMgr::load("res/mesh/rubix/flat-face.obj");
+    rubix = (game::Mesh*)game::ResMgr::load("res/rubix/rubix-face.obj");
+    flat = (game::Mesh*)game::ResMgr::load("res/rubix/flat-face.obj");
     // initialize faces
     game::Camera *cam = new game::Camera();
     cam->persp();

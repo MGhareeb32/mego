@@ -11,10 +11,11 @@ class MeshEntity : public Entity {
     Material *mtl_;
 public:
     MeshEntity(Mesh *m = NULL) : Entity() { mesh_ = m, mtl_ = NULL; };
-    MeshEntity(std::string mesh, std::string mtl,
+    MeshEntity(std::string mesh, std::string mtl = "",
                std::string texture = "") : Entity() {
         mesh_ = (Mesh*)ResMgr::load(mesh);
-        mtl_ = (Material*)ResMgr::load(mtl);
+        if (mtl.size())
+            mtl_ = (Material*)ResMgr::load(mtl);
         if (texture.size())
             mtl_->set_texture((Texture*)ResMgr::load(texture));
     };

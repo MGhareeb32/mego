@@ -56,13 +56,13 @@ void SmallCube::render() {
 CubeFace::CubeFace(bool f, game::Mesh *flat, game::Mesh *rubix, glm::vec3 p) {
 
     static game::Material* COLORS[7]
-        = { (game::Material*)game::ResMgr::load("res/mesh/rubix/rubix-1.mtl"),
-            (game::Material*)game::ResMgr::load("res/mesh/rubix/rubix-6.mtl"),
-            (game::Material*)game::ResMgr::load("res/mesh/rubix/rubix-4.mtl"),
-            (game::Material*)game::ResMgr::load("res/mesh/rubix/rubix-5.mtl"),
-            (game::Material*)game::ResMgr::load("res/mesh/rubix/rubix-2.mtl"),
-            (game::Material*)game::ResMgr::load("res/mesh/rubix/rubix-3.mtl"),
-            (game::Material*)game::ResMgr::load("res/mesh/rubix/rubix-0.mtl") };
+        = { (game::Material*)game::ResMgr::load("res/rubix/rubix-1.mtl"),
+            (game::Material*)game::ResMgr::load("res/rubix/rubix-6.mtl"),
+            (game::Material*)game::ResMgr::load("res/rubix/rubix-4.mtl"),
+            (game::Material*)game::ResMgr::load("res/rubix/rubix-5.mtl"),
+            (game::Material*)game::ResMgr::load("res/rubix/rubix-2.mtl"),
+            (game::Material*)game::ResMgr::load("res/rubix/rubix-3.mtl"),
+            (game::Material*)game::ResMgr::load("res/rubix/rubix-0.mtl") };
 
     set_mesh(f ? flat : rubix);
     int maxI = 0;
