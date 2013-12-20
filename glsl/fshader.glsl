@@ -1,7 +1,8 @@
 #version 330 core
 #define NUM_LIGHTS 32
+#define LOG2 1.442695
 
-uniform mat4 model, view;
+uniform mat4 model, view, proj;
 
 uniform float scene_fog;
 uniform vec3 scene_color;
@@ -42,8 +43,8 @@ void main() {
     vec3 fE = -fPos;
     vec3 N = normalize(fN);
     vec3 E = vec3(0, 0, 1);
-    if (dot(N, E) < 0)
-        discard;
+    //if (dot(N, E) < 0)
+    //    discard;
     for (int i = 0; i < NUM_LIGHTS; ++i) {
         vec3 fL = (view * vec4(lights[i][0].xyz, 0)).xyz;
     
@@ -58,8 +59,7 @@ void main() {
     }
 
     // FOG
-    vec3 afterFog = mix(afterLight, scene_color,
-                        clamp(0 * -scene_fog * fPos.z, 0, 1));
+    vec3 afterFog = mix(afterLight, scene_color, clamp(length(fPos) * scene_fog - 8, 0, 1));
 
     gl_FragColor = vec4(afterFog, tr * blend_color.a);
 }

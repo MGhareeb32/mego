@@ -1,10 +1,13 @@
 #include "MeshViewer.h"
 
 MeshViewer::MeshViewer() {
-    game::fogSet(glm::vec4(0.4f, 0.4f, 0.4f, 1.f), 0.f);
+    game::sceneColorSet(glm::vec3(0.1f, 0.1f, 0.1f));
+    game::fogSet(glm::vec4(0.1f, 0.1f, 0.1f, 1.f), .1f);
     cam_ = new game::Camera();
     game::cameraSet(cam_);
-//    game::mouseLock(true);
+    cam_->persp();
+    game::mouseLock(GL_TRUE);
+    glutSetCursor(GLUT_CURSOR_NONE);
     // load
     obj_mesh_ = (game::Mesh*)game::ResMgr::load
         ("res/mesh/viewer/teapot.obj");
@@ -21,7 +24,6 @@ MeshViewer::MeshViewer() {
     // axes
     set_mesh(axes_mesh_);
     set_mtl(axes_mtl_);
-    scale(glm::vec3(.5f, .5f, .5f));
     // obj
     obj_entity_ = new game::MeshEntity(obj_mesh_);
     obj_entity_->set_mtl(obj_mtl_);
@@ -36,7 +38,7 @@ MeshViewer::MeshViewer() {
     light_entity_->set_mtl(light_mtl_);
     light_entity_->scale(glm::vec3(.05f, .05f, .05f));
     light_->addChild("light", light_entity_);
-    light_->translate(glm::vec3(1.f, 1.f, 1.f));
+    light_->translate(glm::vec3(.8f, .6f, .4f));
 }
 
 MeshViewer::~MeshViewer() {
@@ -60,35 +62,21 @@ void MeshViewer::update() {
         light_->rotate(-speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
     // camera
     game::Camera* myCamera = game::cameraGet();
-    if (game::key_down_['w'])
-        myCamera->rotate(+speed, myCamera->u());
-    if (game::key_down_['s'])
-        myCamera->rotate(-speed, myCamera->u());
 
     if (game::key_down_['q'])
         myCamera->rotate(+speed, myCamera->n());
     if (game::key_down_['e'])
         myCamera->rotate(-speed, myCamera->n());
 
-    if (game::key_down_['d'])
-        myCamera->rotate(+speed, glm::vec3(0, 0, 1));
     if (game::key_down_['a'])
-        myCamera->rotate(-speed, glm::vec3(0, 0, 1));
-
-    if (game::key_down_['A'])
-        myCamera->transform(glm::translate(-myCamera->u() * .1f));
-//        myCamera->translate(-myCamera->u() * .1f);
-    if (game::key_down_['D'])
-        myCamera->transform(glm::translate(myCamera->u() * .1f));
-    if (game::key_down_['W'])
-        myCamera->translate(-myCamera->n() * .1f);
-    if (game::key_down_['S'])
-        myCamera->translate(myCamera->n() * .1f);
+        myCamera->translate(-speed * myCamera->u() * .05f);
+    if (game::key_down_['d'])
+        myCamera->translate(+speed * myCamera->u() * .05f);
+    if (game::key_down_['w'])
+        myCamera->translate(-speed * myCamera->n() * .05f);
+    if (game::key_down_['s'])
+        myCamera->translate(+speed * myCamera->n() * .05f);
     // fps controls
-    if (game::mouse_down_[0]) {
-        glm::vec2 delta = game::mouse_pos_ - game::mouse_pos_prev_;
-        glm::mat4 m = myCamera->arcballRotation
-            (game::mouse_pos_prev_, game::mouse_pos_, glm::vec3(1, 1, 1));
-        myCamera->transform(m);
-    }
+    glm::vec2 delta = game::mouse_pos_ - game::mouse_pos_prev_;
+    myCamera->transform(myCamera->fpsRotation(speed * delta, GL_FALSE));
 }

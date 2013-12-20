@@ -18,13 +18,14 @@ public:
                GLfloat ybottom = -1, GLfloat ytop = 1,
                GLfloat znear = 1, GLfloat zfar = 8);
     void persp(GLfloat fov = 40, GLfloat aspect = 1,
-               GLfloat n = 1, GLfloat f = 8);
+               GLfloat n = .01f, GLfloat f = 100);
 
     glm::mat4 getProjectionMatrix() { return proj_; }
     glm::mat4 getViewMatrix() { return transform_i(); }
 
     glm::vec3 arcballVector(glm::vec2 p, glm::vec3 off);
     glm::mat4 arcballRotation(glm::vec2 p1, glm::vec2 p2, glm::vec3 off);
+    glm::mat4 fpsRotation(glm::vec2 delta, GLboolean flipY);
 };
 
 }

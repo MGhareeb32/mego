@@ -4,7 +4,7 @@ namespace game {
 
 Camera::Camera() : Entity() {
     ortho();
-    lookAt(glm::vec3(2, 2, 2), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
+    lookAt(glm::vec3(3, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
 }
 
 Camera::~Camera() {
@@ -59,7 +59,7 @@ glm::vec3 Camera::arcballVector(glm::vec2 p, glm::vec3 off) {
                               glm::clamp(p.y, -1.f, 1.f), 0, 0);
     GLfloat p_squared = glm::dot(p, p);
     if (p_squared <= 1)
-        out.z = glm::sqrt(1 - p_squared);
+        out.z = glm::sqrt(1 - p_squared) + o().z;
     else
         out = glm::normalize(out);
     return glm::vec3(transform() * out);
@@ -69,13 +69,31 @@ glm::mat4 Camera::arcballRotation(glm::vec2 p1, glm::vec2 p2, glm::vec3 off) {
     glm::vec3 r1 = glm::normalize(arcballVector(p1, off));
     glm::vec3 r2 = glm::normalize(arcballVector(p2, off));
     GLfloat angle = glm::acos(std::min(1.f, glm::dot(r1, r2))) * 180 / M_PI;
-    if (glm::equal(r1, r2)[0] && glm::equal(r1, r2)[1])
+
+    if (glm::equal(r1, r2)[0]
+        && glm::equal(r1, r2)[1]
+        && glm::equal(r1, r2)[0])
         return glm::mat4(1);
     glm::vec3 axis = glm::cross(r1, r2);
 
     rotate(angle, -axis, off);
     glm::mat4 trans = transform();
     rotate(angle, axis, off);
+    return trans * transform_i();
+}
+
+glm::mat4 Camera::fpsRotation(glm::vec2 delta, GLboolean flipY) {
+    glm::vec2 d = glm::degrees(game::mouse_pos_ - game::mouse_pos_prev_);
+    if (!flipY)
+        d.x *= -1.f;
+    glm::vec2 zero = glm::vec2(0, 0);
+    if (glm::equal(delta, zero)[0] && glm::equal(delta, zero)[1])
+        return glm::mat4(1);
+    rotate(d.x, glm::vec3(0, 0, 1), o());
+    rotate(d.y, u(), o());
+    glm::mat4 trans = transform();
+    rotate(-d.y, u(), o());
+    rotate(-d.x, glm::vec3(0, 0, 1), o());
     return trans * transform_i();
 }
 
