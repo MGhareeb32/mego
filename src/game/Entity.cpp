@@ -104,6 +104,12 @@ void Entity::scale(glm::vec3 s, glm::vec3 offset) {
 }
 
 void Entity::rotate(GLfloat angle, glm::vec3 axis, glm::vec3 offset) {
+    glm::vec3 zero = glm::vec3(0);
+    if (glm::equal(glm::vec3(angle), zero)[0]
+        || (glm::equal(axis, zero)[0]
+            && glm::equal(axis, zero)[1]
+            && glm::equal(axis, zero)[2]))
+        return;
     glm::mat4 trans = glm::translate(offset);
     glm::mat4 trans_i = glm::translate(-offset);
     glm::mat4 rot = glm::rotate(angle, axis);
@@ -115,9 +121,7 @@ void Entity::rotate(GLfloat angle, glm::vec3 axis, glm::vec3 offset) {
     v_ = glm::vec3(rot * glm::vec4(v_, 1.f));
     n_ = glm::vec3(rot * glm::vec4(n_, 1.f));
     //
-//    axis = glm::vec3(transform_i_ * glm::vec4(axis, 1.f));
     std::map<std::string, Entity*>::iterator ch = children_.begin();
-//    offset = o_ - glm::vec3(transform_ * glm::vec4(offset, 1.f));
     while (ch != children_.end()) {
         ch->second->rotate(angle, axis, offset);
         ch++;

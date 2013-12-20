@@ -34,13 +34,33 @@ GLint unifrom_texture_flag_;
 
 GLint unifrom_blend_color_, unifrom_blend_factor_ , unifrom_texture;
 
-GLboolean mouse_down_[3], mouse_click_[3];
+std::map<GLint, GLboolean> mouse_down_, mouse_click_;
 glm::vec2 mouse_pos_, mouse_pos_prev_;
-GLboolean key_down_[256], key_click_[256];
+GLboolean mouse_lock_;
+std::map<GLint, GLboolean> key_down_, key_click_, key_special_;
+GLint key_mod_;
 GLint global_time_;
 
 game::Entity* scene_;
 game::Camera* camera_;
+
+// SCREEN
+
+void mouseLock(GLboolean l) {
+    mouse_lock_ = l;
+}
+
+glm::vec2 screen_size_;
+
+glm::vec2 screen_size() {
+    return screen_size_;
+}
+
+glm::vec2 screen_scale(glm::vec2 p) {
+    p *= glm::vec2(1.f / screen_size_.x, -1.f / screen_size_.y) * 2.f;
+    p += glm::vec2(-1, 1);
+    return p;
+}
 
 // OPENGL
 
@@ -57,7 +77,7 @@ void setUniformProjMatrix(glm::mat4 m) {
 }
 
 void fogSet(glm::vec4 color, GLfloat mag) {
-    glClearColor(color.x, color.y, color.z, 1.f);
+    glUniform3f(unifrom_scene_color_, color.x, color.y, color.z);
     glUniform1f(unifrom_scene_fog_, mag);
 }
 
@@ -110,7 +130,7 @@ Entity* sceneGet() {
 }
 
 void sceneColorSet(glm::vec3 color) {
-    glUniform3f(unifrom_scene_color_, color.x, color.y, color.z);
+    glClearColor(color.x, color.y, color.z, 1.f);
 }
 
 // CAMERA
@@ -184,27 +204,39 @@ void init() {
     mtlSet(new Material("default"));
     sceneColorSet(glm::vec3(0.1f, 0.1f, 0.1f));
     fogSet(glm::vec4(0.1f, 0.1f, 0.1f, 1.f), 1.f);
+    mouseLock(GL_FALSE);
 }
 
 // INPUT
 
 void keyPress(unsigned char key, GLint x, GLint y) {
     key_down_[key] = 1;
+    key_mod_ = glutGetModifiers();
 }
 
 void keyRelease(unsigned char key, GLint x, GLint y) {
     key_down_[key] = 0;
     key_click_[key] = 1;
+    key_mod_ = glutGetModifiers();
+}
+
+void keySpecial(int key, GLint x, GLint y) {
+    key_special_[key] = 1;
+    key_mod_ = glutGetModifiers();
 }
 
 void mouseMove(GLint x, GLint y) {
-    mouse_pos_.x = x;
-    mouse_pos_.y = y;
+    mouse_pos_ = screen_scale(glm::vec2(x, y));
+
+    key_mod_ = glutGetModifiers();
 }
 
 void mouseButton(GLint mouseBtn, GLint isRelease, GLint x, GLint y) {
+    mouse_pos_ = screen_scale(glm::vec2(x, y));
+
     mouse_down_[mouseBtn] = !isRelease;
     mouse_click_[mouseBtn] = isRelease;
+    key_mod_ = glutGetModifiers();
 }
 
 // DISPLAY
@@ -218,7 +250,7 @@ void display(void) {
     if (camera_)
         setUniformViewMatrix(camera_->getViewMatrix()),
         setUniformProjMatrix(camera_->getProjectionMatrix());
-    for (int i = 0; i < lights.size(); ++i)
+    for (std::size_t i = 0; i < lights.size(); ++i)
         lightSet(i, lights[i]);
     if (scene_)
         scene_->render();
@@ -238,14 +270,21 @@ void update() {
 void runMainLoop(GLint f) {
     // update
     update();
+    if (mouse_lock_)
+        mouse_pos_prev_ = glm::vec2(0, 0);
+    else
+        mouse_pos_prev_ = mouse_pos_;
     // draw
     glutPostRedisplay();
+    // alt + f4
+    if ((key_mod_ & GLUT_ACTIVE_ALT) &&  key_special_[GLUT_KEY_F4])
+        exit(EXIT_SUCCESS);
     // input
-    for (int i = 0; i < 3; ++i)
-        mouse_click_[i] = 0;
-    for (int i = 0; i < 256; ++i)
-        key_click_[i] = 0;
-    mouse_pos_prev_ = mouse_pos_;
+    if (mouse_lock_)
+        glutWarpPointer(screen_size().x / 2, screen_size().y / 2);
+    mouse_click_.clear();
+    key_click_.clear();
+    key_special_.clear();
     // time
     global_time_++;
 
@@ -260,6 +299,7 @@ void init(int argc, char **argv, GLint w, GLint h, std::string t) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(w, h);
+    screen_size_ = glm::vec2(w, h);
 
     glutCreateWindow(t.c_str());
     glewInit();
@@ -271,6 +311,7 @@ void start(GLint f) {
     glutDisplayFunc(display);
     glutKeyboardFunc(keyPress);
     glutKeyboardUpFunc(keyRelease);
+    glutSpecialFunc(keySpecial);
     glutMouseFunc(mouseButton);
     glutMotionFunc(mouseMove);
     glutPassiveMotionFunc(mouseMove);

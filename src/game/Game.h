@@ -1,22 +1,6 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-#include <exception>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-#include <set>
-
-#include "../../include/Angel.h"
-
-#include "../../include/glm/glm.hpp"
-#include "../../include/glm/gtc/type_ptr.hpp"
-#include "../../include/glm/gtx/transform.hpp"
-#include "../../include/glm/gtx/transform2.hpp"
-#include "../../include/glm/gtc/matrix_transform.hpp"
-#include "../../include/glm/gtc/quaternion.hpp"
-
 #include "OpenGL.h"
 #include "Entity.h"
 #include "Camera.h"
@@ -30,6 +14,11 @@ std::ostream &operator<<(std::ostream &out, const glm::vec3 &vec);
 std::ostream &operator<<(std::ostream &out, const glm::vec4 &vec);
 
 namespace game {
+
+void mouseLock(GLboolean l);
+
+glm::vec2 screen_size();
+glm::vec2 screen_scale(glm::vec2 p);
 
 void sceneSet(Entity *scene, GLboolean destructOld = true);
 Entity* sceneGet();

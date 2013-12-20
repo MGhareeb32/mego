@@ -1,7 +1,8 @@
 #version 330 core
 #define NUM_LIGHTS 32
+#define LOG2 1.442695
 
-uniform mat4 model, view;
+uniform mat4 model, view, proj;
 
 uniform float scene_fog;
 uniform vec3 scene_color;
@@ -45,11 +46,13 @@ void main() {
     vec4 tex = texture_flag ? texture2D(myTextureSampler, UV) : vec4(1);
 
     // LIGHT
-    vec3 afterLight = scene_color;
+    vec3 afterLight[NUM_LIGHTS];
     vec3 fN = (modelView * vec4(fNormal, 0)).xyz;
     vec3 fE = -fPos;
     vec3 N = normalize(fN);
     vec3 E = vec3(0, 0, 1);
+    //if (dot(N, E) < 0)
+    //    discard;
     for (int i = 0; i < NUM_LIGHTS; ++i) {
         vec3 fL = (view * vec4(lights[i][0].xyz, 0)).xyz;
     
@@ -60,15 +63,15 @@ void main() {
         vec3 diffuse = lights[i][2].xyz * kd * max(dot(L, N), 0);
         vec3 specular = lights[i][3].xyz * ks * pow(max(dot(N, H), 0), ns);
 
-        afterLight += (ambient + diffuse);
-        afterLight *= tex.xyz;
-        afterLight += specular;
+        afterLight[i] = (ambient + diffuse) * tex.xyz + specular;
     }
-    
-    
-    // FOG
-    vec3 afterFog = mix(afterLight, scene_color,
-                        clamp(0 * -scene_fog * fPos.z, 0, 1));
+    vec3 finalAfterLight = scene_color;
+    for (int i = 0; i < NUM_LIGHTS; ++i)
+        finalAfterLight += afterLight[i];
 
-    gl_FragColor = vec4(afterFog, tr * blend_color.a);
+    // FOG
+    vec3 afterFog = mix(finalAfterLight, scene_color,
+                        clamp(length(fPos) * scene_fog - 8, 0, 1));
+
+    gl_FragColor = vec4(afterFog, tr * tex.w * blend_color.w);
 }
