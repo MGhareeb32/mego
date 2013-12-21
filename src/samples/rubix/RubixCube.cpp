@@ -14,7 +14,7 @@ RubixCube::RubixCube() {
                 if (x != y || y != z || z != 0.f)
                     addChild(std::string("cube") + char(childrenCount() + '0'),
                              new SmallCube(glm::vec3(x, y, z), flat, rubix));
-    scale(glm::vec3(.4f, .4f, .4f));
+    scale(glm::vec3(.2f, .2f, .2f));
     game::fogSet(glm::vec4(0, 0, 0, 1), 0);
     //
     game::Light *l1 = new game::Light(glm::vec3(.5f));

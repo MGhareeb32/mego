@@ -25,13 +25,26 @@ public:
             faces[i]->render();
     }
 
-    bool intersects(glm::mat4 m, glm::vec3 off, glm::vec3 dir) {
-        off = glm::vec3(m * glm::vec4(off, 1));
-        dir = glm::normalize(glm::vec3(m * glm::vec4(dir, 1)));
+    GLboolean getIntersect(glm::vec3 off, glm::vec3 dir) {
+        glm::vec3 s;
         for (std::size_t i = 0; i < faces.size(); ++i)
-            if (faces[i] && faces[i]->intersects(off, dir))
+            if (faces[i] && faces[i]->intersect(off, dir, &s))
                 return true;
         return false;
+    }
+
+    glm::vec3 getNearestIntersect(glm::vec3 off, glm::vec3 dir) {
+        glm::vec3 s, nearestS;
+        GLfloat minDist = std::numeric_limits<GLfloat>::infinity();
+        for (std::size_t i = 0; i < faces.size(); ++i)
+            if (faces[i] && faces[i]->intersect(off, dir, &s)) {
+                GLfloat dist = glm::dot(off - s, dir);
+                if (dist > 0 && dist < minDist) {
+                    minDist = dist;
+                    nearestS = s;
+                }
+             }
+        return nearestS;
     }
 };
 

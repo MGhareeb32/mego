@@ -1,7 +1,7 @@
-#include "CubeWorld.h"
+#include "Pointing.h"
 using namespace std;
 
-CubeWorld::CubeWorld() {
+Pointing::Pointing() {
     game::sceneColorSet(glm::vec3(0.2f, 0.2f, 0.2f));
     game::fogSet(glm::vec4(0.1f, 0.1f, 0.1f, 1.f), .1f);
     cam_ = new game::Camera();
@@ -11,7 +11,7 @@ CubeWorld::CubeWorld() {
     // axes
     scale(glm::vec3(.5f, .5f, .5f));
     // obj
-    std::ifstream input("res/cubeworld/map.in");
+    std::ifstream input("res/pointing/map.in");
     int xlength, ylength, zlength;
     input >> xlength >> ylength >> zlength;
     int nextBlock = 0;
@@ -22,13 +22,16 @@ CubeWorld::CubeWorld() {
                 input >> exist;
                 if (exist) {
                     game::MeshEntity *newEntity
-                        = new game::MeshEntity("res/cubeworld/box.obj",
-                                               "res/cubeworld/box.mtl",
-                                               "res/cubeworld/box.png");
+                        = new game::MeshEntity("res/pointing/batman.obj",
+                                               "res/pointing/batman.mtl",
+                                               "res/pointing/batman.png");
                     string name = "newEntity_";
                     name.append(1, (nextBlock++) + '0');
                     addChild(name, newEntity);
-                    newEntity->scale(glm::vec3(.1f, .1f, .1f));
+//                    newEntity->scale(glm::vec3(.05f, .05f, .05f));
+                    newEntity->scale(glm::vec3(.2f, .2f, .2f));
+                    newEntity->rotate(90, glm::vec3(1, 0, 0));
+                    newEntity->rotate(-45, glm::vec3(0, 0, 1));
                     newEntity->translate(glm::vec3((x - xlength / 2) * .2f, (y - ylength / 2) * .2f, (z - zlength / 2) * .2f));
                     map_entities_.push_back(newEntity);
                 }
@@ -46,10 +49,10 @@ CubeWorld::CubeWorld() {
     light_->translate(glm::vec3(1.f, .5f, .25f));
 }
 
-CubeWorld::~CubeWorld() {
+Pointing::~Pointing() {
 }
 
-void CubeWorld::update() {
+void Pointing::update() {
     GLfloat speed = 2 - game::key_down_[' '] * 1.5f;
 
     // light
@@ -87,23 +90,26 @@ void CubeWorld::update() {
     cam_->transform(cam_->fpsRotation(speed * delta, GL_FALSE));
 
     // pointing
-    glm::vec3 point, nearestPoint;
-    GLfloat minDist = numeric_limits<GLfloat>::infinity();
-    game::MeshEntity *pointEntity = NULL;
-    for (std::size_t i = 0; i < map_entities_.size(); ++i) {
-        game::MeshEntity *entity = map_entities_[i];
-        // intersects
-        if (entity->getIntersect(cam_->o(), cam_->n())) {
-            GLfloat dist = glm::dot(cam_->o() - point, cam_->n());
-            std::cout << dist << " ";
-            if (dist > 0 && dist < minDist) {
-                minDist = dist;
-                nearestPoint = point;
-                pointEntity = entity;
+    if (game::mouse_down_[GLUT_LEFT_BUTTON]) {
+        glm::vec3 point, nearestPoint;
+        GLfloat minDist = numeric_limits<GLfloat>::infinity();
+        game::MeshEntity *pointEntity = NULL;
+        for (std::size_t i = 0; i < map_entities_.size(); ++i) {
+            game::MeshEntity *entity = map_entities_[i];
+            // intersects
+            if (entity->getIntersect(cam_->o(), cam_->n())) {
+                point = entity->getNearestIntersect(cam_->o(), cam_->n());
+                GLfloat dist = glm::dot(cam_->o() - point, cam_->n());
+                std::cout << dist << " ";
+                if (dist > 0 && dist < minDist) {
+                    minDist = dist;
+                    nearestPoint = point;
+                    pointEntity = entity;
+                }
             }
         }
+        std::cout << std::endl;
+        if (pointEntity)
+            pointEntity->rotate(5.f, glm::vec3(0, 0, 1), pointEntity->o());
     }
-    std::cout << std::endl;
-    if (pointEntity)
-        pointEntity->rotate(5.f, glm::vec3(0, 0, 1), pointEntity->o());
 }

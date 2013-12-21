@@ -36,8 +36,25 @@ public:
         Entity::render();
     }
 
-    bool intersects(glm::vec3 off, glm::vec3 dir) {
-        return mesh_ && mesh_->intersects(transform_i(), off, dir);
+    GLboolean getIntersect(glm::vec3 off, glm::vec3 dir) {
+        if (mesh_) {
+            glm::mat4 m = transform_i();
+            off = glm::vec3(m * glm::vec4(off, 1));
+            dir = glm::normalize(glm::vec3(m * glm::vec4(dir, 0)));
+            return mesh_->getIntersect(off, dir);
+        }
+        return false;
+    }
+
+    glm::vec3 getNearestIntersect(glm::vec3 off, glm::vec3 dir) {
+        if (mesh_) {
+            glm::mat4 m = transform_i();
+            off = glm::vec3(m * glm::vec4(off, 1));
+            dir = glm::normalize(glm::vec3(m * glm::vec4(dir, 0)));
+            glm::mat4 m_i = transform();
+            glm::vec3 s = mesh_->getNearestIntersect(off, dir);
+            return glm::vec3(m_i * glm::vec4(s, 1));
+        }
     }
 };
 
