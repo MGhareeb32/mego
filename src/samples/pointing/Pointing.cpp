@@ -90,26 +90,26 @@ void Pointing::update() {
     cam_->transform(cam_->fpsRotation(speed * delta, GL_FALSE));
 
     // pointing
-    if (game::mouse_down_[GLUT_LEFT_BUTTON]) {
-        glm::vec3 point, nearestPoint;
-        GLfloat minDist = numeric_limits<GLfloat>::infinity();
-        game::MeshEntity *pointEntity = NULL;
-        for (std::size_t i = 0; i < map_entities_.size(); ++i) {
-            game::MeshEntity *entity = map_entities_[i];
-            // intersects
-            if (entity->getIntersect(cam_->o(), cam_->n())) {
-                point = entity->getNearestIntersect(cam_->o(), cam_->n());
-                GLfloat dist = glm::dot(cam_->o() - point, cam_->n());
-                std::cout << dist << " ";
-                if (dist > 0 && dist < minDist) {
-                    minDist = dist;
-                    nearestPoint = point;
-                    pointEntity = entity;
-                }
+    glm::vec3 point, nearestPoint;
+    GLfloat minDist = numeric_limits<GLfloat>::infinity();
+    game::MeshEntity *pointEntity = NULL;
+    for (std::size_t i = 0; i < map_entities_.size(); ++i) {
+        game::MeshEntity *entity = map_entities_[i];
+        entity->mtl()->set_kd(glm::vec3(1, 1, 1));
+        // intersects
+        if (entity->getIntersect(cam_->o(), cam_->n())) {
+            point = entity->getNearestIntersect(cam_->o(), cam_->n());
+            GLfloat dist = glm::dot(cam_->o() - point, cam_->n());
+            if (dist > 0 && dist < minDist) {
+                minDist = dist;
+                nearestPoint = point;
+                pointEntity = entity;
             }
         }
-        std::cout << std::endl;
-        if (pointEntity)
+    }
+    if (pointEntity) {
+        if (game::mouse_down_[GLUT_LEFT_BUTTON])
             pointEntity->rotate(5.f, glm::vec3(0, 0, 1), pointEntity->o());
+        pointEntity->mtl()->set_kd(glm::vec3(0.f, .5f, 1.f));
     }
 }

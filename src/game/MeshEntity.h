@@ -10,12 +10,15 @@ class MeshEntity : public Entity {
     Mesh *mesh_;
     Material *mtl_;
 public:
-    MeshEntity(Mesh *m = NULL) : Entity() { mesh_ = m, mtl_ = NULL; };
+    MeshEntity(Mesh *m = NULL) : Entity() {
+        mesh_ = m;
+        mtl_ = NULL;
+    };
     MeshEntity(std::string mesh, std::string mtl = "",
                std::string texture = "") : Entity() {
         mesh_ = (Mesh*)ResMgr::load(mesh);
         if (mtl.size())
-            mtl_ = (Material*)ResMgr::load(mtl);
+            mtl_ = new Material(*(Material*)ResMgr::load(mtl));
         if (texture.size())
             mtl_->set_texture((Texture*)ResMgr::load(texture));
     };
@@ -24,7 +27,11 @@ public:
     Mesh* mesh() { return mesh_; }
     void set_mesh(Mesh *m) { mesh_ = m; }
     Material* mtl() { return mtl_; }
-    void set_mtl(Material *mtl) { mtl_ = mtl; }
+    void set_mtl(Material *mtl) {
+        if (mtl_)
+            mtl_->~Material();
+        mtl_ = mtl;
+    }
 
     virtual void render() {
         // render self
