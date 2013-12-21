@@ -3,7 +3,7 @@
 namespace game {
 
 Camera::Camera() : Entity() {
-    ortho();
+    persp();
     lookAt(glm::vec3(3, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
 }
 
@@ -17,11 +17,11 @@ void Camera::lookAt(glm::vec3 eye, glm::vec3 coi, glm::vec3 upv) {
     glm::vec3 newU = glm::normalize(glm::cross(upv, newN));
     glm::vec3 newV = glm::cross(newN, newU);
 
-    GLfloat angU = acos(glm::dot(newU, u())) * 180 / M_PI;
+    GLfloat angU = glm::degrees(acos(glm::dot(newU, u())));
     glm::vec3 axisU = glm::cross(newU, u());
     rotate(-angU, axisU);
 
-    GLfloat angV = acos(glm::dot(newV, v())) * 180 / M_PI;
+    GLfloat angV = glm::degrees(acos(glm::dot(newV, v())));
     glm::vec3 axisV = glm::cross(newV, v());
     rotate(-angV, axisV);
 
@@ -46,7 +46,7 @@ void Camera::ortho(GLfloat xleft, GLfloat xright,
 
 void Camera::persp(GLfloat fov, GLfloat aspect, GLfloat n, GLfloat f) {
     proj_ = glm::mat4(0);
-    GLfloat tanHalfFovy = glm::tan(fov * M_PI / 360);
+    GLfloat tanHalfFovy = glm::tan(glm::radians(fov) / 2);
     proj_[0][0] = 1 / (aspect * tanHalfFovy);
     proj_[1][1] = 1 / (tanHalfFovy);
     proj_[2][2] = - (f + n) / (f - n);
@@ -68,7 +68,7 @@ glm::vec3 Camera::arcballVector(glm::vec2 p, glm::vec3 off) {
 glm::mat4 Camera::arcballRotation(glm::vec2 p1, glm::vec2 p2, glm::vec3 off) {
     glm::vec3 r1 = glm::normalize(arcballVector(p1, off));
     glm::vec3 r2 = glm::normalize(arcballVector(p2, off));
-    GLfloat angle = glm::acos(std::min(1.f, glm::dot(r1, r2))) * 180 / M_PI;
+    GLfloat angle = glm::degrees(glm::acos(std::min(1.f, glm::dot(r1, r2))));
 
     if (glm::equal(r1, r2)[0]
         && glm::equal(r1, r2)[1]

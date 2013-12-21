@@ -54,14 +54,14 @@ void main() {
     //if (dot(N, E) < 0)
     //    discard;
     for (int i = 0; i < NUM_LIGHTS; ++i) {
-        vec3 fL = (view * vec4(lights[i][0].xyz, 0)).xyz;
+        vec3 fL = (view * vec4(lights[i][3].xyz, 0)).xyz;
     
         vec3 L = normalize(fL);
         vec3 H = normalize(L + E);
      
-        vec3 ambient = lights[i][1].xyz * ka;
-        vec3 diffuse = lights[i][2].xyz * kd * max(dot(L, N), 0);
-        vec3 specular = lights[i][3].xyz * ks * pow(max(dot(N, H), 0), ns);
+        vec3 ambient = lights[i][0].xyz * ka;
+        vec3 diffuse = lights[i][1].xyz * kd * max(dot(L, N), 0);
+        vec3 specular = lights[i][2].xyz * ks * pow(max(dot(N, H), 0), ns);
 
         afterLight[i] = (ambient + diffuse) * tex.xyz + specular;
     }

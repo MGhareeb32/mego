@@ -12,13 +12,13 @@ SmallCube::SmallCube(glm::vec3 p, game::Mesh *flat, game::Mesh *rubix) {
     for (GLint i = 0; i < 6; i++) {
         // create
         glm::vec3 v = glm::vec3(dir[i][0], dir[i][1], dir[i][2]);
-        GLdouble diffAng = acos(glm::dot(glm::normalize(v), glm::normalize(c)))
-                         * 180 / M_PI;
+        GLdouble diffAng = glm::degrees(acos(glm::dot(glm::normalize(v),
+                                                      glm::normalize(c))));
         std::string name = std::string("small") + char(i + '0');
         Entity* small = addChild
             (name, new CubeFace(diffAng > 60, flat, rubix, p + v));
         // position
-        GLdouble rot = -acos(glm::dot(v, small->v())) * 180 / M_PI;
+        GLdouble rot = -glm::degrees(acos(glm::dot(v, small->v())));
         glm::vec3 axis = glm::cross(v, small->v());
         small->scale(glm::vec3(v.x ? v.x : 1, v.y ? v.y : 1, v.z ? v.z : 1));
         if (glm::dot(axis, axis) > EPS)

@@ -28,11 +28,11 @@ MeshViewer::MeshViewer() {
     obj_entity_->scale(glm::vec3(.7f, .7f, .7f));
     // light
     for (int i = 0; i < N_LIGHT; ++i) {
-        light_entity_[i] = new game::MeshEntity("res/viewer/gem.obj",
-                                                "res/viewer/gem.mtl");
+        light_entity_[i] = new game::MeshEntity("res/lamp.obj",
+                                                "res/lamp.mtl");
         const char *name[] = {"1", "2", "3", "4"};
         addChild(name[i], light_entity_[i] );
-        light_[i] = new game::Light();
+        light_[i] = new game::Light(glm::vec3(2));
         game::lights.push_back(light_[i]);
         light_entity_[i]->addChild("light", light_[i]);
         light_entity_[i]->scale(glm::vec3(.05f, .05f, .05f));

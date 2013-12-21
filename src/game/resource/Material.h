@@ -24,10 +24,15 @@ public:
     ~Material() {};
 
     glm::vec3 ka() { return ka_; }
+    void set_ka(glm::vec3 ka) { ka_ = ka; }
     glm::vec3 kd() { return kd_; }
+    void set_kd(glm::vec3 kd) { kd_ = kd; }
     glm::vec3 ks() { return ks_; }
+    void set_ks(glm::vec3 ks) { ks_ = ks; }
     GLfloat ns() { return ns_; }
+    void set_ns(GLfloat ns) { ns_ = ns; }
     GLfloat tr() { return tr_; }
+    void set_tr(GLfloat tr) { tr_ = tr; }
     Texture *texture() { return texture_; }
     void set_texture(Texture *texture) { texture_ = texture; }
 };

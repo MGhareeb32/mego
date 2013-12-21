@@ -17,11 +17,11 @@ RubixCube::RubixCube() {
     scale(glm::vec3(.4f, .4f, .4f));
     game::fogSet(glm::vec4(0, 0, 0, 1), 0);
     //
-    game::Light *l1 = new game::Light(glm::vec3(.5f), glm::vec3(.5f));
+    game::Light *l1 = new game::Light(glm::vec3(.5f));
     game::lights.push_back(l1);
     l1->translate(glm::vec3(10, 0, 10));
     //
-    game::Light *l2 = new game::Light(glm::vec3(.5f), glm::vec3(.4f));
+    game::Light *l2 = new game::Light(glm::vec3(.5f));
     game::lights.push_back(l2);
     l2->translate(glm::vec3(5, 5, 10));
 }

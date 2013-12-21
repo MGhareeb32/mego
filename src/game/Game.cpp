@@ -110,10 +110,8 @@ void mtlSet(Material* mtl) {
 // LIGHT
 
 void lightSet(int idx, Light* l) {
-    glm::mat4 a = glm::mat4(glm::vec4(l->o(), 0),
-                            glm::vec4(l->ambient(), 0),
-                            glm::vec4(l->diffuse(), 0),
-                            glm::vec4(l->specular(), 0));
+    glm::mat4 a = glm::mat4(l->color());
+    a[3] = glm::vec4(l->o(), 1);
     glUniformMatrix4fv(unifrom_lights_[idx], 1, GL_FALSE, &a[0][0]);
 }
 
@@ -165,7 +163,7 @@ void init() {
         std::stringstream ss;
         ss << "lights[" << i << "]";
         unifrom_lights_[i] = glGetUniformLocation(program, ss.str().c_str());
-        Light *l = new Light(glm::vec3(0), glm::vec3(0), glm::vec3(0));
+        Light *l = new Light(glm::mat3(0));
         lightSet(i, l);
         l->~Light();
     }
@@ -294,7 +292,7 @@ void runMainLoop(GLint f) {
 // INIT
 
 void init(int argc, char **argv, GLint w, GLint h, std::string t) {
-    std::cout.precision(2);
+    std::cout.precision(8);
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
