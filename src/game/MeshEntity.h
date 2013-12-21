@@ -37,7 +37,6 @@ public:
     }
 
     bool intersects(glm::vec3 off, glm::vec3 dir) {
-        // std::cout << std::endl << "check " << o();
         return mesh_ && mesh_->intersects(transform_i(), off, dir);
     }
 };

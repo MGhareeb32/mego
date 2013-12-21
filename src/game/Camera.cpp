@@ -4,7 +4,7 @@ namespace game {
 
 Camera::Camera() : Entity() {
     persp();
-    lookAt(glm::vec3(3, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
+    lookAt(glm::vec3(2, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
 }
 
 Camera::~Camera() {

@@ -292,7 +292,7 @@ void runMainLoop(GLint f) {
 // INIT
 
 void init(int argc, char **argv, GLint w, GLint h, std::string t) {
-    std::cout.precision(8);
+    std::cout.precision(4);
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);

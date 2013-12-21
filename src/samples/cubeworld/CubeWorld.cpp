@@ -28,6 +28,7 @@ CubeWorld::CubeWorld() {
                     string name = "newEntity_";
                     name.append(1, (nextBlock++) + '0');
                     addChild(name, newEntity);
+//                    newEntity->scale(glm::vec3(.5f, .5f, .5f));
                     newEntity->scale(glm::vec3(.1f, .1f, .1f));
                     newEntity->translate(glm::vec3((x - xlength / 2) * .2f, (y - ylength / 2) * .2f, (z - zlength / 2) * .2f));
                     map_entities_.push_back(newEntity);
@@ -86,9 +87,7 @@ void CubeWorld::update() {
     // intersect
     for (std::size_t i = 0; i < map_entities_.size(); ++i)
         if (map_entities_[i]->intersects(myCamera->o(), myCamera->n()))
-            std::cout << std::endl << map_entities_[i]->o(),
             map_entities_[i]->mtl()->set_ka(glm::vec3(.5f, 0, 0));
         else
             map_entities_[i]->mtl()->set_ka(glm::vec3(.1f, .1f, .1f));
-    std::cout << std::endl << "DONE" << std::endl;
 }
