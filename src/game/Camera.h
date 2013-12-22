@@ -4,14 +4,11 @@
 #include "OpenGL.h"
 #include "Entity.h"
 #include "Internal.h"
-#include "Grid.h"
 
 namespace game {
 
 class Camera : public Entity {
     glm::mat4 proj_;
-    int jumpCount;
-
 public:
     Camera();
     virtual ~Camera();
@@ -29,11 +26,6 @@ public:
     glm::vec3 arcballVector(glm::vec2 p, glm::vec3 off);
     glm::mat4 arcballRotation(glm::vec2 p1, glm::vec2 p2, glm::vec3 off);
     glm::mat4 fpsRotation(glm::vec2 delta, GLboolean flipY);
-
-
-    void jump();
-    void moveDown(GLfloat speed);
-    void movePlayer(glm::vec3 d);
 };
 
 }

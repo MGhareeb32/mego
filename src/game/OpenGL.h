@@ -3,9 +3,10 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <cstring>
 #include <string>
 #include <vector>
-#include <cmath>
+#include <limits>
 #include <map>
 #include <set>
 
@@ -20,6 +21,8 @@
 #include "../../include/glm/gtc/quaternion.hpp"
 #include "../../include/glm/gtx/rotate_vector.hpp"
 #include "../../include/glm/gtx/vector_angle.hpp"
+#include "../../include/glm/gtx/epsilon.hpp"
+#include "../../include/glm/gtc/constants.hpp"
 
 extern std::ostream &operator<<(std::ostream &out, const glm::vec2 &vec);
 extern std::ostream &operator<<(std::ostream &out, const glm::vec3 &vec);

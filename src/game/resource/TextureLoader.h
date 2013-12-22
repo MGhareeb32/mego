@@ -6,7 +6,7 @@
 
 #include "../OpenGL.h"
 #include "Texture.h"
-#include "../../../include/soil/SOIL.h"
+#include "libexternal/SOIL.h"
 
 namespace game {
 namespace TextureLoader {

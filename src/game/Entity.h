@@ -55,12 +55,9 @@ public:
 
     void rotate(GLfloat angle, glm::vec3 axis,
                 glm::vec3 offset = glm::vec3(0, 0, 0));
-//    void rotate(GLfloat angle, glm::vec3 axis);
 
     virtual void update();
     virtual void render();
-//    virtual bool preRender();
-//    virtual bool postRender();
 
 };
 

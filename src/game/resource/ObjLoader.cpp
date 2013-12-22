@@ -20,6 +20,7 @@ game::Mesh *load(std::string fname, std::string dir) {
         } else if (!type.compare("vt")) {
             glm::vec2 vt;
             in >> vt.x >> vt.y;
+            vt.y = 1 - vt.y;
             uvmap.push_back(vt);
         } else if (!type.compare("vn")) {
             glm::vec3 vn;
@@ -41,7 +42,7 @@ game::Mesh *load(std::string fname, std::string dir) {
                 // coord
                 if (vertex.size())
                     in >> a, v[i] = vertex[a - 1];
-                // vt TODO
+                // vt
                 in >> d;
                 if (uvmap.size())
                     in >> a, vt[i] = uvmap[a - 1];

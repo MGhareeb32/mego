@@ -5,24 +5,6 @@ namespace ResMgr {
 
 std::map<std::string, Resource*> resources_;
 
-//std::vector<std::string> getObjMtls(std::string fname) {
-//    std::fstream in;
-//    in.open(fname.c_str(), std::fstream::in);
-//    //
-//    std::vector<std::string> out;
-//    std::string type;
-//    while (in >> type) {
-//        if (!type.compare("mtllib")) {
-//            in >> type;
-//            out.push_back(type);
-//        } else {
-//            getline(in, type);
-//        }
-//    }
-//    in.close();
-//    return out;
-//}
-
 Resource* load(std::string file) {
     // already there
     if (resources_[file])

@@ -22,5 +22,5 @@ void main() {
     fNormal = vNormal;
 
     gl_Position = proj * vec4(fPos, 1);
-    UV = vec2(vertexUV.x, 1 - vertexUV.y);
+    UV = vertexUV.xy;
 }

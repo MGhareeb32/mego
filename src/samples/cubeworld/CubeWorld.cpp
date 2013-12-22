@@ -1,99 +1,91 @@
 #include "CubeWorld.h"
-#include "../../game/Grid.h"
-using namespace std;
 
 CubeWorld::CubeWorld() {
+    game::mouseLock(GL_TRUE);
+    glutSetCursor(GLUT_CURSOR_CROSSHAIR);
 	game::sceneColorSet(glm::vec3(0.2f, 0.2f, 0.2f));
     game::fogSet(glm::vec4(0.1f, 0.1f, 0.1f, 1.f), .1f);
+    // camera
     cam_ = new game::Camera();
     game::cameraSet(cam_);
-    cam_->persp();
-    game::mouseLock(GL_TRUE);
-    // axes
-    scale(glm::vec3(.5f, .5f, .5f));
+    reset();
     // obj
     std::ifstream input("res/cubeworld/map.in");
-    int xlen,ylen,zlen;
-    input >> xlen >> ylen >> zlen;
-    cout << " size " << xlen << " " << ylen << " " << zlen << endl;
-    Grid::setGridSize(xlen, ylen, zlen);
-    // initialize map with -1
-    for(int i =0;i < 100;i++)
-    	for(int j =0 ;j  < 100;j++)
-    		for(int k =0 ;k < 100;k++)
-    			Grid::editGridMap(i,j,k,0);
+    int xlength, ylength, zlength;
+    input >> xlength >> ylength >> zlength;
     int nextBlock = 0;
-    for (int z = 0; z < zlen; z++) {
-        for (int x = 0; x < xlen; x++)
-            for (int y = 0; y < ylen; y++) {
-                int val;
-            	input >> val;
-            	Grid::editGridMap(x,y,z,val);
-                // TODO add target
-                if (val) {
+    for (int z = 0; z < zlength; z++) {
+        for (int x = 0; x < xlength; x++)
+            for (int y = 0; y < ylength; y++) {
+                int exist;
+                input >> exist;
+                if (exist) {
                     game::MeshEntity *newEntity
-                        = new game::MeshEntity("res/cubeworld/box.obj",
-                                               "res/cubeworld/box.mtl",
-                                               "res/cubeworld/box.png");
-                    string name = "newEntity_";
+                        = new game::MeshEntity("res/box.obj",
+                                               "res/default.mtl",
+                                               "res/box.png");
+                    std::string name = "newEntity_";
                     name.append(1, (nextBlock++) + '0');
                     addChild(name, newEntity);
-                    newEntity->scale(glm::vec3(.1f, .1f, .1f));
-                    newEntity->translate(glm::vec3(x * Grid::getGridDelta(), y * Grid::getGridDelta(), z * Grid::getGridDelta()));
+                    newEntity->scale(glm::vec3(SZ / 2, SZ / 2, SZ / 2));
+                    newEntity->translate(glm::vec3(x * SZ, y * SZ, z * SZ));
                     map_entities_.push_back(newEntity);
                 }
             }
     }
-    for (size_t i = 0; i < map_entities_.size(); i++)
-        cout << map_entities_[i]->o() << endl;
-    // light
-    light_ = new game::Light(glm::vec3(1));
-    addChild("light", light_);
-    game::lights.push_back(light_);
-    //
-    light_entity_ = new game::MeshEntity("res/cubeworld/gem.obj",
-                                         "res/cubeworld/gem.mtl",
-                                         "res/cubeworld/gem.png");
-    light_entity_->scale(glm::vec3(.05f, .05f, .05f));
-    light_->addChild("light", light_entity_);
-    light_->translate(glm::vec3(1.f, .5f, 0.f));
+    // lights
+    int nLightX = (xlength + 4) / 5;
+    int nLightY = (ylength + 4) / 5;
+    light_ = new game::Light*[nLightX];
+    light_entity_ = new game::MeshEntity*[nLightX];
+    for (int i = 0; i < nLightX * nLightY; ++i) {
+        GLfloat x = 5 * SZ * ((i % nLightX) + .5f) - 2.5f * SZ;
+        GLfloat y = 5 * SZ * ((i / nLightX) + .5f) - 2.5f * SZ;
+        // light
+        light_[i] = new game::Light(glm::vec3(1.f / nLightX));
+        std::stringstream ss("light");
+        ss << i;
+        addChild(ss.str(), light_[i]);
+        game::lights.push_back(light_[i]);
+        // model
+        light_entity_[i] = new game::MeshEntity("res/lamp.obj",
+                                                "res/lamp.mtl");
+        light_entity_[i]->scale(glm::vec3(.05f, .05f, .05f));
+        light_[i]->addChild("light", light_entity_[i]);
+        light_[i]->translate(glm::vec3(x, y, 2.f));
+    }
+    // center
+    translate(glm::vec3(-xlength * SZ / 2, -ylength * SZ / 2, 0.f));
 }
 
 CubeWorld::~CubeWorld() {
 }
 
+void CubeWorld::reset() {
+    cam_->lookAt(glm::vec3(0, 0, 5),
+                 glm::vec3(0, 0, 0),
+                 glm::vec3(0, 1, 1));
+    cam_->persp();
+}
+
 void CubeWorld::update() {
-    GLfloat speed = game::key_down_[' '] * 3 + 2;
-    // light
-    if (game::key_down_['c'])
-        light_entity_->rotate(+speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
-    if (game::key_down_['v'])
-        light_entity_->rotate(-speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
+    GLfloat speed = 2 - game::key_down_[' '] * 1.5f;
+
     // camera
-    game::Camera* myCamera = game::cameraGet();
-    if (game::key_down_['q'])
-        myCamera->rotate(+speed, myCamera->n());
-    if (game::key_down_['e'])
-        myCamera->rotate(-speed, myCamera->n());
-
-    if (game::key_down_['a'])
-        myCamera->movePlayer(-speed * myCamera->u() * .05f);
-    if (game::key_down_['d'])
-        myCamera->movePlayer(+speed * myCamera->u() * .05f);
     if (game::key_down_['w'])
-        myCamera->movePlayer(-speed * myCamera->n() * .05f);
+        cam_->translate(-speed * cam_->n() * .05f);
     if (game::key_down_['s'])
-        myCamera->movePlayer(+speed * myCamera->n() * .05f);
+        cam_->translate(+speed * cam_->n() * .05f);
+    if (game::key_down_['a'])
+        cam_->translate(-speed * cam_->u() * .05f);
+    if (game::key_down_['d'])
+        cam_->translate(+speed * cam_->u() * .05f);
+    if (game::key_down_['q'])
+        cam_->rotate(+speed, cam_->n());
+    if (game::key_down_['e'])
+        cam_->rotate(-speed, cam_->n());
 
-    if(game::key_down_['j'])
-        myCamera->jump();
-
-    // Gravity
-
-    myCamera->moveDown(speed);
-
-    // fps controls
+    // fps
     glm::vec2 delta = game::mouse_pos_ - game::mouse_pos_prev_;
-    // TODO check if transform use translate
-    myCamera->transform(myCamera->fpsRotation(speed * delta, GL_FALSE));
+    cam_->transform(cam_->fpsRotation(speed * delta, GL_FALSE));
 }

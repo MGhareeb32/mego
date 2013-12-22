@@ -4,10 +4,8 @@ using namespace std;
 namespace game {
 
 Camera::Camera() : Entity() {
-	jumpCount =0;
-	ortho();
-    lookAt(glm::vec3(3, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
-//    translate(-o());
+    persp();
+    lookAt(glm::vec3(1, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
 }
 
 Camera::~Camera() {
@@ -20,11 +18,11 @@ void Camera::lookAt(glm::vec3 eye, glm::vec3 coi, glm::vec3 upv) {
     glm::vec3 newU = glm::normalize(glm::cross(upv, newN));
     glm::vec3 newV = glm::cross(newN, newU);
 
-    GLfloat angU = acos(glm::dot(newU, u())) * 180 / M_PI;
+    GLfloat angU = glm::degrees(acos(glm::dot(newU, u())));
     glm::vec3 axisU = glm::cross(newU, u());
     rotate(-angU, axisU);
 
-    GLfloat angV = acos(glm::dot(newV, v())) * 180 / M_PI;
+    GLfloat angV = glm::degrees(acos(glm::dot(newV, v())));
     glm::vec3 axisV = glm::cross(newV, v());
     rotate(-angV, axisV);
 
@@ -49,7 +47,7 @@ void Camera::ortho(GLfloat xleft, GLfloat xright,
 
 void Camera::persp(GLfloat fov, GLfloat aspect, GLfloat n, GLfloat f) {
     proj_ = glm::mat4(0);
-    GLfloat tanHalfFovy = glm::tan(fov * M_PI / 360);
+    GLfloat tanHalfFovy = glm::tan(glm::radians(fov) / 2);
     proj_[0][0] = 1 / (aspect * tanHalfFovy);
     proj_[1][1] = 1 / (tanHalfFovy);
     proj_[2][2] = - (f + n) / (f - n);
@@ -71,7 +69,7 @@ glm::vec3 Camera::arcballVector(glm::vec2 p, glm::vec3 off) {
 glm::mat4 Camera::arcballRotation(glm::vec2 p1, glm::vec2 p2, glm::vec3 off) {
     glm::vec3 r1 = glm::normalize(arcballVector(p1, off));
     glm::vec3 r2 = glm::normalize(arcballVector(p2, off));
-    GLfloat angle = glm::acos(std::min(1.f, glm::dot(r1, r2))) * 180 / M_PI;
+    GLfloat angle = glm::degrees(glm::acos(std::min(1.f, glm::dot(r1, r2))));
 
     if (glm::equal(r1, r2)[0]
         && glm::equal(r1, r2)[1]
@@ -100,68 +98,4 @@ glm::mat4 Camera::fpsRotation(glm::vec2 delta, GLboolean flipY) {
     return trans * transform_i();
 }
 
-void Camera::jump(){
-	jumpCount = 5;
-}
-
-void Camera::moveDown(GLfloat speed){
-	if(jumpCount > 0)
-	{
-		speed *= -1.0f;
-		--jumpCount;
-	}
-//	glm::vec4 tmp = (transform()*glm::vec4(0.0f ,0.0f  , -1.0f ,0.0f));
-//	glm::vec3 zAxis(tmp[0], tmp[1], tmp[2]);
-	glm::vec3 zAxis(0.0f, 0.0f, 1.0f);
-
-    // gravity .. move down
-    movePlayer(-speed * zAxis* .05f);
-
-}
-
-bool invalidPos(int x,int y,int z){
-	return x < 0 || x >= Grid::getGridX() || y < 0 || y
-				>= Grid::getGridY() || z < 0 || z >= Grid::getGridZ()
-				|| Grid::getGridMapAt(x, y, z) == 1;
-}
-
-
-void Camera::movePlayer(glm::vec3 d) {
-	cout <<" camera pos " << o() << endl;
-	int curXPos = (int) ((o()[0] + Grid::getGridDelta() / 2.0f)
-			/ Grid::getGridDelta());
-	int curYPos = (int) ((o()[1] + Grid::getGridDelta() / 2.0f)
-			/ Grid::getGridDelta());
-	int curZPos = (int) ((o()[2] + Grid::getGridDelta() / 2.0f)
-			/ Grid::getGridDelta());
-
-
-	int nextXPos = (int) ((o()[0] + Grid::getGridDelta() / 2.0f + d[0])
-			/ Grid::getGridDelta());
-	int nextYPos = (int) ((o()[1] + Grid::getGridDelta() / 2.0f + d[1])
-			/ Grid::getGridDelta());
-	int nextZPos = (int) ((o()[2] + Grid::getGridDelta() / 2.0f + d[2])
-			/ Grid::getGridDelta());
-
-	cout << " player at pos " << curXPos << " " << curYPos<< " " << curZPos<< endl;
-	cout << " player at pos " << nextXPos << " " << nextYPos<< " " << nextZPos<< endl;
-	cout << " ----------- " << endl;
-	if (invalidPos(nextXPos, nextYPos, nextZPos))
-	{
-//		if (invalidPos(curXPos, curYPos, curZPos)) {
-			cout << " invalid position" << endl;
-//			translate(-d);
-//		}
-	}
-	else{
-		cout << " valid ! " << endl;
-	translate(d);
-	}
-	if(o()[2] < 0){
-		// make the 0 lower bound
-		translate(glm::vec3(0.0f,0.0f,-o()[2]));
-	}
-
-	// TODO make valid method
-}
 }

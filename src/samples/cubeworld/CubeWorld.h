@@ -4,13 +4,15 @@
 #include "../../game/Game.h"
 
 class CubeWorld : public game::MeshEntity {
-    game::MeshEntity *light_entity_;
+    static const GLfloat SZ = .1f;
     game::Camera *cam_;
-    game::Light *light_;
+    game::MeshEntity **light_entity_;
+    game::Light **light_;
     std::vector<game::MeshEntity *> map_entities_;
 public:
     CubeWorld();
     ~CubeWorld();
+    void reset();
     void update();
 };
 
