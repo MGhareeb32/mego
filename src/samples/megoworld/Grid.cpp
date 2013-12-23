@@ -29,11 +29,15 @@ const glm::vec3 Grid::CRNR[12] = {
 const GLint Grid::CELL_BAD = -1;
 const GLint Grid::CELL_EMPTY = 0;
 
-const GLfloat Grid::SZ = 0.1f;
-const GLfloat Grid::SZI = 1 / Grid::SZ;
-const glm::mat4 Grid::SCALE = glm::scale(SZ, SZ, SZ);
+const glm::vec3 Grid::SZ
+    = glm::vec3(0.1f, 0.1f, 0.05f);
+const glm::vec3 Grid::SZI
+    = glm::vec3(1 / Grid::SZ.x, 1 / Grid::SZ.y, 1 / Grid::SZ.z);
 
-const GLfloat Grid::GRAVITY = -SZ * .04f;
+const glm::mat4 Grid::SCALE = glm::scale(SZ);
+const glm::mat4 Grid::SCALEI = glm::scale(SZI);
+
+const GLfloat Grid::GRAVITY = -SZ.z * .04f;
 
 Grid::Grid(std::string file) {
     std::ifstream input(file.c_str());

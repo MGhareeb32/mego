@@ -1,7 +1,7 @@
 #include "MegoPlayer.h"
 
 MegoPlayer::MegoPlayer(Grid *grid) : grid_(grid),
-    RD(grid_->SZ * .5), HT(grid_->SZ * 2), SPEED(.1f) {
+    RD(.5f * grid_->SZ.x), HT(2.f * grid_->SZ.z), SPEED(.1f) {
 
     eye_ = new game::Camera();
     addChild("eye", eye_);
@@ -10,10 +10,10 @@ MegoPlayer::MegoPlayer(Grid *grid) : grid_(grid),
     eye_->lookAt(glm::vec3(0, 0, 0),
                  glm::vec3(1.f, .5f, 0),
                  glm::vec3(0, 0, 1));
-    eye_->translate(glm::vec3(0.f, 0.f, HT * .5));
-    translate(grid_->indexToWorld(grid_->spawn_point())
-              + glm::vec3(.5f * grid_->SZ));
+    eye_->translate(glm::vec3(0.f, 0.f, .8f * HT));
+    translate(grid_->indexToWorld(grid_->spawn_point()) + .5f * Grid::SZ);
 
+    ht_ = HT;
     falling_ = zspeed_ = 0;
 }
 
@@ -36,12 +36,18 @@ void MegoPlayer::update() {
     if (game::key_press_[' '])
         jump();
 
+    // crouch
+    crouching_ = !falling_ && (game::key_down_['q'] || !placeFree(o() + glm::vec3(0, 0, .5f * HT)));
+    GLfloat prev_ht = ht_;
+    ht_ += (.5f * (1 + !crouching_) * HT - ht_) * .5;
+    eye_->translate(glm::vec3(0, 0, ht_ - prev_ht));
+
     // fps controls
     glm::vec2 delta = game::mouse_pos_ - game::mouse_pos_prev_;
     eye_->transform(eye_->fpsRotation(speed * delta, GL_FALSE));
 
     // gravity
-    falling_ = placeFree(o() + glm::vec3(0, 0, zspeed_ - HT * .1f));
+    falling_ = placeFree(o() + glm::vec3(0, 0, zspeed_ - ht_ * .1f));
     zspeed_ = glm::clamp(zspeed_ + Grid::GRAVITY * falling_, -HT, HT);
     if (glm::abs(zspeed_) > glm::epsilon<GLfloat>())
         translate(glm::vec3(0, 0, zspeed_));

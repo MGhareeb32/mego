@@ -20,10 +20,10 @@ public:
 
     static const GLint CELL_BAD;
     static const GLint CELL_EMPTY;
+    static const glm::vec3 SZ;
+    static const glm::vec3 SZI;
 
-    static const GLfloat SZ;
-    static const GLfloat SZI;
-    static const glm::mat4 SCALE;
+    static const glm::mat4 SCALE, SCALEI;
 
     static const GLfloat GRAVITY;
 
@@ -39,8 +39,7 @@ public:
         for (int j = 0; j < 6; j++)
             if (localCell(cell + glm::ivec3(DIR[j])) <= 0){
                 game::mtlSet(brick_mtl_[grid_map_[z][y][x]]);
-                brick_mesh_[j]->render
-                    (glm::translate(SCALE * glm::mat4(1), glm::vec3(cell)));
+                brick_mesh_[j]->render(glm::translate(SCALE, glm::vec3(cell)));
             }
     }
 
