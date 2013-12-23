@@ -15,6 +15,8 @@ MegoPlayer::MegoPlayer(Grid *grid) : grid_(grid),
 
     ht_ = falling_ = zspeed_ = 0;
     //crouching_ = 1;
+
+    item_selected_ = -1;
 }
 
 MegoPlayer::~MegoPlayer() {
@@ -66,13 +68,9 @@ void MegoPlayer::update() {
     glm::ivec3 worldPointBrick = gridLocalPointBrick(&pointInter);
     if (worldPointBrick.x >= 0) {
         if (game::mouse_click_[GLUT_LEFT_BUTTON])
-            grid_->worldCellHit(worldPointBrick);
+            pickBrick(worldPointBrick);
         if (game::mouse_click_[GLUT_RIGHT_BUTTON])
-            grid_->localCellPlace(worldPointBrick,
-                                  pointInter, 1);
-        if (!placeFree(o()))
-            grid_->localCellPlace(worldPointBrick,
-                                  pointInter, Grid::CELL_EMPTY);
+            putBrick(worldPointBrick, pointInter);
     }
 }
 
@@ -95,4 +93,35 @@ void MegoPlayer::walk(glm::vec3 v, GLfloat speed) {
 void MegoPlayer::jump() {
     if (!falling_)
         zspeed_ = SPEED * .25f;
+}
+
+void MegoPlayer::pickBrick(glm::ivec3 worldPointBrick) {
+    GLint brick = grid_->worldCellHit(worldPointBrick);
+    if (brick > 0) {
+        item_count_[brick]++;
+    }
+}
+
+void MegoPlayer::putBrick(glm::ivec3 worldPointBrick, glm::vec3 pointInter) {
+
+    GLint item = item_selected_;
+    if (!item_count_.size())
+        return;
+    if (item == -1)
+        item = item_count_.begin()->first;
+
+    if (item_count_[item] > 0) {
+        // placed successfully
+        grid_->localCellPlace(worldPointBrick, pointInter, item);
+        item_count_[item]--;
+        // failed
+        if (!placeFree(o())) {
+            grid_->localCellPlace
+                (worldPointBrick, pointInter, Grid::CELL_EMPTY);
+            item_count_[item]++;
+        }
+        // erase when empty
+        if (!item_count_[item])
+            item_count_.erase(item);
+    }
 }

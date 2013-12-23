@@ -11,8 +11,11 @@ class Grid : public game::Entity {
 
     game::Mesh *brick_mesh_[6];
 
-    static const GLint NUM_CELL_COLORS = 2;
+    static const GLint NUM_CELL_COLORS = 3;
     game::Material *brick_mtl_[NUM_CELL_COLORS];
+
+    int timer_;
+    glm::vec3 target_;
 
 public:
 
@@ -20,6 +23,9 @@ public:
 
     static const GLint CELL_BAD;
     static const GLint CELL_EMPTY;
+    static const GLint CELL_TARGET;
+    static const GLint MAX_TIME;
+
     static const glm::vec3 SZ;
     static const glm::vec3 SZI;
 
@@ -98,9 +104,11 @@ public:
 
     // hit
 
-    void worldCellHit(glm::ivec3 cell) {
+    GLint worldCellHit(glm::ivec3 cell) {
+        GLint out = grid_map_[cell.z][cell.y][cell.x];
         if (localCell(cell) > 0)
             grid_map_[cell.z][cell.y][cell.x] = CELL_EMPTY;
+        return out;
     }
 
     void localCellPlace(glm::ivec3 cell, glm::vec3 worldInterPnt, GLint v) {
@@ -118,6 +126,19 @@ public:
         glm::ivec3 targetCell = cell + glm::ivec3(interNormal);
         if (localCell(targetCell) == CELL_EMPTY)
             grid_map_[targetCell.z][targetCell.y][targetCell.x] = v;
+    }
+    
+    glm::vec3 getTarget(){
+    	return target_;
+    }
+
+    // Timer
+    int getTimer(){
+    	return timer_;
+    }
+
+    void updateTimer(){
+    	timer_--;
     }
 };
 

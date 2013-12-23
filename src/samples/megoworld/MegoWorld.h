@@ -11,6 +11,9 @@ class MegoWorld : public game::MeshEntity {
 
     game::MeshEntity*light_entity_[game::NUM_LIGHTS];
     game::Light *light_[game::NUM_LIGHTS];
+    int calcPlayerTargetDist();
+    void checkGameEnd();
+    void updateTitle();
 public:
     MegoWorld();
     ~MegoWorld();

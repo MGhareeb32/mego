@@ -12,6 +12,8 @@ class MegoPlayer : public game::MeshEntity {
     GLboolean falling_;//, crouching_;
     GLfloat ht_, zspeed_;
 
+    GLint item_selected_;
+    std::map<GLint, GLint> item_count_;
 
     game::Camera *eye_;
 
@@ -88,6 +90,11 @@ public:
     // jump
 
     void jump();
+
+    // bricks
+
+    void pickBrick(glm::ivec3 worldPointBrick);
+    void putBrick(glm::ivec3 worldPointBrick, glm::vec3 pointInter);
 };
 
 #endif
