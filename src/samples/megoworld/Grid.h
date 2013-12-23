@@ -9,9 +9,9 @@ class Grid : public game::Entity {
     glm::ivec3 spawn_point_, size_;
     GLfloat size_sqrd_;
 
-    game::Mesh *brick_mesh_[6];
+    game::Mesh *brick_face_[6];
 
-    static const GLint NUM_CELL_COLORS = 3;
+    static const GLint NUM_CELL_COLORS = 8;
     game::Material *brick_mtl_[NUM_CELL_COLORS];
 
     int timer_;
@@ -42,12 +42,13 @@ public:
     void drawCell(int x, int y, int z) {
         if (grid_map_[z][y][x] <= 0)
             return;
-        // TODO optimize as to loop on the sphere only
+        // TODO optimize to put visible faces in some datastructure and update
+        // when needed (no processing)
         glm::ivec3 cell(x, y, z);
         for (int j = 0; j < 6; j++)
             if (localCell(cell + glm::ivec3(DIR[j])) <= 0){
                 game::mtlSet(brick_mtl_[grid_map_[z][y][x]]);
-                brick_mesh_[j]->render(glm::translate(SCALE, glm::vec3(cell)));
+                brick_face_[j]->render(glm::translate(SCALE, glm::vec3(cell)));
             }
     }
 
@@ -111,7 +112,12 @@ public:
         return out;
     }
 
-    void localCellPlace(glm::ivec3 cell, glm::vec3 worldInterPnt, GLint v) {
+    void localCellPlace(glm::ivec3 c, GLint v) {
+        grid_map_[c.z][c.y][c.x] = v;
+    }
+
+    glm::ivec3 localCellPlace(glm::ivec3 cell, glm::vec3 worldInterPnt,
+                              GLint v) {
         // a vector that goes from center of brick to intersection point
         glm::vec3 interVector = SZI * (worldInterPnt - indexToWorld(cell)
                                        - .5f * glm::vec3(1.f, 1.f, -1.f) * SZ);
@@ -125,7 +131,10 @@ public:
 
         glm::ivec3 targetCell = cell + glm::ivec3(interNormal);
         if (localCell(targetCell) == CELL_EMPTY)
-            grid_map_[targetCell.z][targetCell.y][targetCell.x] = v;
+            localCellPlace(targetCell, v);
+        else
+            targetCell = glm::ivec3(-1, -1, -1);
+        return targetCell;
     }
     
     glm::vec3 getTarget(){

@@ -41,39 +41,40 @@ MegoWorld::~MegoWorld() {
 
 int MegoWorld::calcPlayerTargetDist(){
     glm::vec3 diff = (player_->o() - grid_->getTarget());
-	return ((int) (std::sqrt(diff[0] * diff[0] + diff[1] * diff[1] + diff[2]
-			* diff[2]) / ((Grid::SZ[0]+Grid::SZ[1])/2)));
+    return ((int) (std::sqrt(diff[0] * diff[0] + diff[1] * diff[1] + diff[2]
+            * diff[2]) / ((Grid::SZ[0]+Grid::SZ[1])/2)));
 }
 
 std::string toTimeFormat(int time){
-	int mins = time/60;
-	int secs = time%60;
-	std::stringstream timeFormat;
-	timeFormat << ((mins < 10)?"0":"") << mins << ":" << ((secs < 10)?"0":"") << secs;
-	return timeFormat.str();
+    int mins = time/60;
+    int secs = time%60;
+    std::stringstream timeFormat;
+    timeFormat << ((mins < 10)?"0":"") << mins
+               << ":" << ((secs < 10)?"0":"") << secs;
+    return timeFormat.str();
 }
 
 
 void MegoWorld::updateTitle(){
-	std::stringstream title;
-    title << "you are far away " << calcPlayerTargetDist() << " from treasure" << " .. remaining "
-			<< toTimeFormat(grid_->getTimer());
+    std::stringstream title;
+    title << "You are " << calcPlayerTargetDist()
+          << " away from the treasure. " << toTimeFormat(grid_->getTimer())
+          << " remaining";
     glutSetWindowTitle(title.str().c_str());
 }
 
 void MegoWorld::checkGameEnd(){
-	if(grid_->worldCell(grid_->getTarget()) != Grid::CELL_TARGET){
-		// win
-		MessageBox(NULL, "Win GAME!", "SEE U!", 0);
-		exit(EXIT_SUCCESS);
-	}
-	if(grid_->getTimer() == 0){
-		// lose
-		MessageBox(NULL, "TIME OVER, LOSER!", "SEE U!", 0);
-		exit(EXIT_SUCCESS);
-	}
+    // win
+    if (grid_->worldCell(grid_->getTarget()) != Grid::CELL_TARGET){
+        MessageBox(NULL, "Win GAME!", "SEE U!", 0);
+        exit(EXIT_SUCCESS);
+    }
+    // lose
+    if (grid_->getTimer() == 0){
+        MessageBox(NULL, "TIME OVER, LOSER!", "SEE U!", 0);
+        exit(EXIT_SUCCESS);
+    }
 }
-
 
 void MegoWorld::update() {
     player_->update();

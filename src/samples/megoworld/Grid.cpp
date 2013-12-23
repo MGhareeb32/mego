@@ -28,8 +28,8 @@ const glm::vec3 Grid::CRNR[12] = {
 
 const GLint Grid::CELL_BAD = -1;
 const GLint Grid::CELL_EMPTY = 0;
-const GLint Grid::CELL_TARGET = 2;
-const GLint Grid::MAX_TIME = 1000;
+const GLint Grid::CELL_TARGET = NUM_CELL_COLORS - 1;
+const GLint Grid::MAX_TIME = 5000;
 
 const glm::vec3 Grid::SZ
     = glm::vec3(0.1f, 0.1f, 0.05f);
@@ -68,17 +68,18 @@ Grid::Grid(std::string file) {
     std::stringstream ss;
     for (int i = 0; i < 6; ++i) {
         ss.str("");
-        ss << "res/megoworld/mego-brick-cube-" << i << ".obj";
-        brick_mesh_[i] = (game::Mesh *)game::ResMgr::load(ss.str());
+        ss << "res/megoworld/mego-brick-face-" << i << ".obj";
+        brick_face_[i] = (game::Mesh *)game::ResMgr::load(ss.str());
     }
     // prepare materials
     for (int i = 1; i < NUM_CELL_COLORS; ++i) {
         ss.str("");
-        ss << "res/megoworld/mego-brick-" << i << ".mtl";
-        brick_mtl_[i] = (game::Material *)game::ResMgr::load(ss.str());
-        ss.str("");
-        ss << "res/megoworld/mego-brick-" << i << ".png";
-        brick_mtl_[i]->set_texture((game::Texture *)game::ResMgr::load(ss.str()));
+        ss << "res/megoworld/mego-brick-mat-" << i << ".mtl";
+        brick_mtl_[i]
+            = (game::Material *)game::ResMgr::load(ss.str());
+        brick_mtl_[i]->set_texture
+            ((game::Texture *)game::ResMgr::load
+                ("res/megoworld/mego-brick-tex.png"));
     }
     // initialize timer
     timer_ = Grid::MAX_TIME;
