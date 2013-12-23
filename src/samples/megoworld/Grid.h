@@ -9,10 +9,11 @@ class Grid : public game::Entity {
     glm::ivec3 spawn_point_, size_;
     GLfloat size_sqrd_;
 
-    game::Mesh *brick_mesh_;
+    game::Mesh *brick_mesh_[6];
 
     static const GLint NUM_CELL_COLORS = 2;
     game::Material *brick_mtl_[NUM_CELL_COLORS];
+
 public:
 
     static const glm::vec3 DIR[], CRNR[];
@@ -22,6 +23,7 @@ public:
 
     static const GLfloat SZ;
     static const GLfloat SZI;
+    static const glm::mat4 SCALE;
 
     static const GLfloat GRAVITY;
 
@@ -29,6 +31,18 @@ public:
 	virtual ~Grid();
 
     void render();
+
+    void drawCell(int x, int y, int z) {
+        if (grid_map_[z][y][x] <= 0)
+            return;
+        glm::ivec3 cell(x, y, z);
+        for (int j = 0; j < 6; j++)
+            if (localCell(cell + glm::ivec3(DIR[j])) <= 0){
+                game::mtlSet(brick_mtl_[grid_map_[z][y][x]]);
+                brick_mesh_[j]->render
+                    (glm::translate(SCALE * glm::mat4(1), glm::vec3(cell)));
+            }
+    }
 
     GLint **operator[](int z) { return grid_map_[z]; }
 	glm::ivec3 size() { return size_; }
