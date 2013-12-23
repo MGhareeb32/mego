@@ -1,7 +1,7 @@
 #include "MegoPlayer.h"
 
 MegoPlayer::MegoPlayer(Grid *grid) : grid_(grid),
-    RD(.5f * grid_->SZ.x), HT(2.f * grid_->SZ.z), SPEED(.1f) {
+    RD(.5f * grid_->SZ.x), HT(1.5f * grid_->SZ.z), SPEED(.1f) {
 
     eye_ = new game::Camera();
     addChild("eye", eye_);
@@ -10,11 +10,11 @@ MegoPlayer::MegoPlayer(Grid *grid) : grid_(grid),
     eye_->lookAt(glm::vec3(0, 0, 0),
                  glm::vec3(1.f, .5f, 0),
                  glm::vec3(0, 0, 1));
-    eye_->translate(glm::vec3(0.f, 0.f, .8f * HT));
+    eye_->translate(glm::vec3(0.f, 0.f, 0.04f));
     translate(grid_->indexToWorld(grid_->spawn_point()) + .5f * Grid::SZ);
 
-    ht_ = HT;
-    falling_ = zspeed_ = 0;
+    ht_ = falling_ = zspeed_ = 0;
+    //crouching_ = 1;
 }
 
 MegoPlayer::~MegoPlayer() {
@@ -37,9 +37,8 @@ void MegoPlayer::update() {
         jump();
 
     // crouch
-    crouching_ = !falling_ && (game::key_down_['q'] || !placeFree(o() + glm::vec3(0, 0, .5f * HT)));
     GLfloat prev_ht = ht_;
-    ht_ += (.5f * (1 + !crouching_) * HT - ht_) * .5;
+    ht_ += (.8f * (1 /*+ !crouching_*/) * HT - ht_) * .5;
     eye_->translate(glm::vec3(0, 0, ht_ - prev_ht));
 
     // fps controls
@@ -54,13 +53,27 @@ void MegoPlayer::update() {
 
     // resolve collision
     GLboolean stuck = true;
-    for (GLfloat i = 0; i <= HT * 2 && stuck; i += .1f * HT * SPEED)
+    for (GLfloat i = 0; i <= RD * 2 && stuck; i += .1f * RD * SPEED)
         for (GLint j = 0; j < 6 && stuck; ++j)
             if (placeFree(o() + Grid::DIR[j] * i)) {
                 translate(Grid::DIR[j] * i), stuck = false;
                 if (glm::abs(i) >  glm::epsilon<GLfloat>())
                     zspeed_ = 0.f;
             }
+
+    // pointing
+    glm::vec3 pointInter;
+    glm::ivec3 worldPointBrick = gridLocalPointBrick(&pointInter);
+    if (worldPointBrick.x >= 0) {
+        if (game::mouse_click_[GLUT_LEFT_BUTTON])
+            grid_->worldCellHit(worldPointBrick);
+        if (game::mouse_click_[GLUT_RIGHT_BUTTON])
+            grid_->localCellPlace(worldPointBrick,
+                                  pointInter, 1);
+        if (!placeFree(o()))
+            grid_->localCellPlace(worldPointBrick,
+                                  pointInter, Grid::CELL_EMPTY);
+    }
 }
 
 void MegoPlayer::walk(glm::vec3 v, GLfloat speed) {
@@ -81,5 +94,5 @@ void MegoPlayer::walk(glm::vec3 v, GLfloat speed) {
 
 void MegoPlayer::jump() {
     if (!falling_)
-        zspeed_ = SPEED * .35f;
+        zspeed_ = SPEED * .25f;
 }

@@ -39,6 +39,8 @@ const glm::mat4 Grid::SCALEI = glm::scale(SZI);
 
 const GLfloat Grid::GRAVITY = -SZ.z * .04f;
 
+const GLint Grid::INTERACT_RD = 4;
+
 Grid::Grid(std::string file) {
     std::ifstream input(file.c_str());
     // size
@@ -82,6 +84,8 @@ Grid::~Grid() {
 }
 
 void Grid::render() {
+    // TODO optimize as to render on same material bricks at the same time
+    // TODO optimize as to render visible faces only
     for (int z = 0; z < size_.z; z++)
         for (int y = 0; y < size_.y; y++)
             for (int x = 0; x < size_.x; x++)
