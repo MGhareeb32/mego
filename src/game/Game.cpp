@@ -36,7 +36,7 @@ GLint unifrom_blend_color_, unifrom_blend_factor_ , unifrom_texture;
 std::map<GLint, GLboolean> mouse_down_, mouse_click_;
 glm::vec2 mouse_pos_, mouse_pos_prev_;
 GLboolean mouse_lock_;
-std::map<GLint, GLboolean> key_down_, key_click_, key_special_;
+std::map<GLint, GLboolean> key_down_, key_press_, key_release_, key_special_;
 GLint key_mod_;
 GLint global_time_;
 
@@ -186,10 +186,13 @@ void init() {
     std::cout << "uniforms loaded" << std::endl;
 
     // controls
-    for (int i = 0; i < 3; ++i)
-        mouse_down_[i] = mouse_click_[i] = 0;
-    for (int i = 0; i < 256; ++i)
-        key_down_[i] = key_click_[i] = 0;
+    mouse_down_.clear();
+    mouse_click_.clear();
+    key_down_.clear();
+    key_press_.clear();
+    key_release_.clear();
+    key_special_.clear();
+    key_mod_ = 0;
     global_time_ = 0;
 
     glClearDepth(1.0);
@@ -208,13 +211,14 @@ void init() {
 // INPUT
 
 void keyPress(unsigned char key, GLint x, GLint y) {
+    key_press_[key] = 1;
     key_down_[key] = 1;
     key_mod_ = glutGetModifiers();
 }
 
 void keyRelease(unsigned char key, GLint x, GLint y) {
     key_down_[key] = 0;
-    key_click_[key] = 1;
+    key_release_[key] = 1;
     key_mod_ = glutGetModifiers();
 }
 
@@ -281,7 +285,8 @@ void runMainLoop(GLint f) {
     if (mouse_lock_)
         glutWarpPointer(screen_size().x / 2, screen_size().y / 2);
     mouse_click_.clear();
-    key_click_.clear();
+    key_press_.clear();
+    key_release_.clear();
     key_special_.clear();
     // time
     global_time_++;

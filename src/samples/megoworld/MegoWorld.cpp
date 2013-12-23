@@ -2,7 +2,7 @@
 
 MegoWorld::MegoWorld() {
     game::mouseLock(GL_TRUE);
-    glutSetCursor(GLUT_CURSOR_CROSSHAIR);
+    glutSetCursor(GLUT_CURSOR_NONE);
     game::sceneColorSet(glm::vec3(0.1f, 0.1f, 0.1f));
     game::fogSet(glm::vec4(0.1f, 0.1f, 0.1f, 1.f), .1f);
     // load map
@@ -10,7 +10,7 @@ MegoWorld::MegoWorld() {
     addChild("grid", grid_);
     // camera
     player_ = new MegoPlayer(grid_);
-    game::cameraSet(player_);
+    game::cameraSet(player_->eye());
     // light
     glm::ivec3 size = grid_->size();
     GLint lightArea = size.x * size.y / game::NUM_LIGHTS;
@@ -40,24 +40,5 @@ MegoWorld::~MegoWorld() {
 }
 
 void MegoWorld::update() {
-    GLfloat speed = game::key_down_[' '] * 3 + 2;
-
-    // light
-    if (game::key_down_['c'])
-        light_entity_[0]->rotate(+speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
-    if (game::key_down_['v'])
-        light_entity_[0]->rotate(-speed, glm::vec3(0, 0, 1), glm::vec3(0, 0, 0));
-
-    // camera
-    if (game::key_down_['a'])
-        player_->translate(-speed * player_->u() * .05f);
-    if (game::key_down_['d'])
-        player_->translate(+speed * player_->u() * .05f);
-    if (game::key_down_['w'])
-        player_->translate(-speed * player_->n() * .05f);
-    if (game::key_down_['s'])
-        player_->translate(+speed * player_->n() * .05f);
-    // fps controls
-    glm::vec2 delta = game::mouse_pos_ - game::mouse_pos_prev_;
-    player_->transform(player_->fpsRotation(speed * delta, GL_FALSE));
+    player_->update();
 }

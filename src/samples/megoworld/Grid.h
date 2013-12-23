@@ -3,39 +3,69 @@
 
 #include "../../game/Game.h"
 
-static const GLint NUM_CELL_COLORS = 2;
-static const GLint CELL_EMPTY = 0;
-
-static const GLfloat CELL_SIZE = 0.1f;
-static const GLfloat CELL_SIZE_INV = 1 / CELL_SIZE;
-static const GLfloat CELL_HEIGHT = CELL_SIZE / 2;
-static const GLfloat CELL_HEIGHT_INV = 1 / CELL_HEIGHT;
-
 class Grid : public game::Entity {
 
     GLint ***grid_map_;
     glm::ivec3 spawn_point_, size_;
+    GLfloat size_sqrd_;
 
     game::Mesh *brick_mesh_;
+
+    static const GLint NUM_CELL_COLORS = 2;
     game::Material *brick_mtl_[NUM_CELL_COLORS];
 public:
+
+    static const glm::vec3 DIR[], CRNR[];
+
+    static const GLint CELL_BAD;
+    static const GLint CELL_EMPTY;
+
+    static const GLfloat SZ;
+    static const GLfloat SZI;
+
+    static const GLfloat GRAVITY;
 
     Grid(std::string file);
 	virtual ~Grid();
 
-	GLint **operator[](int z) { return grid_map_[z]; }
+    void render();
+
+    GLint **operator[](int z) { return grid_map_[z]; }
 	glm::ivec3 size() { return size_; }
 	glm::ivec3 spawn_point() { return spawn_point_; }
 
+	// conversion
+
 	glm::ivec3 worldToIndex(glm::vec3 world) {
-        return glm::ivec3(glm::vec3(CELL_SIZE_INV * glm::vec4(world, 1)));
+        return glm::ivec3(SZI * world);
     }
 
 	glm::vec3 indexToWorld(glm::ivec3 index) {
-	    return glm::vec3(CELL_SIZE * glm::vec4(index, 1));
+	    return SZ * glm::vec3(index);
     }
 
-	void render();
+	// inside check
+
+    GLboolean localIsInside(glm::ivec3 v) {
+        return v.x >= 0 && v.x < size_.x
+            && v.y >= 0 && v.y < size_.y
+            && v.z >= 0 && v.z < size_.z;
+    }
+
+    GLboolean worldIsInside(glm::vec3 pos) {
+        return localIsInside(worldToIndex(pos));
+    }
+
+    // get data
+
+    int localCell(glm::ivec3 v) {
+        return localIsInside(v) ? grid_map_[v.z][v.y][v.x] : CELL_BAD;
+    }
+
+    int worldCell(glm::vec3 pos) {
+        return localCell(worldToIndex(pos));
+    }
+
 };
 
 #endif

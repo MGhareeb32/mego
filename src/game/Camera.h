@@ -17,7 +17,7 @@ public:
     void ortho(GLfloat xleft = -1, GLfloat xright = 1,
                GLfloat ybottom = -1, GLfloat ytop = 1,
                GLfloat znear = 1, GLfloat zfar = 8);
-    void persp(GLfloat fov = 40, GLfloat aspect = 1,
+    void persp(GLfloat fov = 50, GLfloat aspect = 1,
                GLfloat n = .01f, GLfloat f = 100);
 
     glm::mat4 getProjectionMatrix() { return proj_; }

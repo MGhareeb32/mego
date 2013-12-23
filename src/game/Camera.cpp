@@ -93,8 +93,14 @@ glm::mat4 Camera::fpsRotation(glm::vec2 delta, GLboolean flipY) {
     rotate(d.x, glm::vec3(0, 0, 1), o());
     rotate(d.y, u(), o());
     glm::mat4 trans = transform();
+    // make sure not to flip
+    glm::vec3 oldN_xy = glm::vec3(n().x, n().y, 0);
     rotate(-d.y, u(), o());
+    glm::vec3 newN_xy = glm::vec3(n().x, n().y, 0);
+    GLfloat cosAngle = glm::dot(newN_xy, oldN_xy);
     rotate(-d.x, glm::vec3(0, 0, 1), o());
+    if (cosAngle < 0)
+        return glm::mat4(1);
     return trans * transform_i();
 }
 
