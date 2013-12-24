@@ -6,10 +6,13 @@
 class Grid : public game::Entity {
 
     GLint ***grid_map_;
+    glm::mat4 ***grid_cell_trans_;
     glm::ivec3 spawn_point_, size_;
     GLfloat size_sqrd_;
 
     game::Mesh *brick_face_[6];
+    game::Mesh *brick_face_detail_;
+    glm::ivec3 detail_center_;
 
     static const GLint NUM_CELL_COLORS = 8;
     game::Material *brick_mtl_[NUM_CELL_COLORS];
@@ -32,7 +35,8 @@ public:
     static const glm::mat4 SCALE, SCALEI;
 
     static const GLfloat GRAVITY;
-    static const GLint INTERACT_RD;
+    static const GLint INTERACT_RD, INTERACT_RD_2;
+    static const GLint DETAIL_RD, DETAIL_RD_2;
 
     Grid(std::string file);
 	virtual ~Grid();
@@ -40,21 +44,36 @@ public:
     void render();
 
     void drawCell(int x, int y, int z) {
-        if (grid_map_[z][y][x] <= 0)
-            return;
-        // TODO optimize to put visible faces in some datastructure and update
-        // when needed (no processing)
         glm::ivec3 cell(x, y, z);
+        if (localCell(cell) <= 0)
+            return;
+        // TODO optimize to put visible faces in some data-structure and update
+        // when needed (no processing)
         for (int j = 0; j < 6; j++)
             if (localCell(cell + glm::ivec3(DIR[j])) <= 0){
                 game::mtlSet(brick_mtl_[grid_map_[z][y][x]]);
-                brick_face_[j]->render(glm::translate(SCALE, glm::vec3(cell)));
+                brick_face_[j]->render(grid_cell_trans_[z][y][x]);
+            }
+    }
+
+    void drawCellDetail(int x, int y, int z, GLfloat r2) {
+        game::setUniformBlendColor
+            (glm::vec4(1, 1, 1, 2 - r2 / DETAIL_RD_2 * 2),
+             glm::vec4(0, 0, 0, 1));
+        glm::ivec3 cell(x, y, z);
+        if (localCell(cell) <= 0)
+            return;
+        for (int j = 0; j < 6; j++)
+            if (localCell(cell + glm::ivec3(0, 0, 1)) <= 0){
+                game::mtlSet(brick_mtl_[grid_map_[z][y][x]]);
+                brick_face_detail_->render(grid_cell_trans_[z][y][x]);
             }
     }
 
     GLint **operator[](int z) { return grid_map_[z]; }
 	glm::ivec3 size() { return size_; }
 	glm::ivec3 spawn_point() { return spawn_point_; }
+	void set_detail_center(glm::ivec3 p) { detail_center_ = p; }
 
 	// conversion
 
@@ -96,7 +115,7 @@ public:
             for (int y = -INTERACT_RD; y <= INTERACT_RD; y++)
                 for (int x = -INTERACT_RD; x <= INTERACT_RD; x++) {
                     glm::ivec3 r = glm::ivec3(x, y, z);
-                    if (glm::length(r) <= INTERACT_RD
+                    if (glm::length2(r) <= INTERACT_RD_2
                         && localCell(pLocal + r) > 0)
                             out.push_back(pLocal + r);
                 }
@@ -136,12 +155,13 @@ public:
             targetCell = glm::ivec3(-1, -1, -1);
         return targetCell;
     }
-    
+
     glm::vec3 getTarget(){
     	return target_;
     }
 
     // Timer
+
     int getTimer(){
     	return timer_;
     }

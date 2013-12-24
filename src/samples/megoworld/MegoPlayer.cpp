@@ -48,7 +48,7 @@ void MegoPlayer::update() {
     eye_->transform(eye_->fpsRotation(speed * delta, GL_FALSE));
 
     // gravity
-    falling_ = placeFree(o() + glm::vec3(0, 0, zspeed_ - ht_ * .1f));
+    falling_ = placeFree(o() + glm::vec3(0, 0, zspeed_ - ht_ * .3f));
     zspeed_ = glm::clamp(zspeed_ + Grid::GRAVITY * falling_, -HT, HT);
     if (glm::abs(zspeed_) > glm::epsilon<GLfloat>())
         translate(glm::vec3(0, 0, zspeed_));
@@ -72,6 +72,8 @@ void MegoPlayer::update() {
         if (game::mouse_click_[GLUT_RIGHT_BUTTON])
             putBrick(worldPointBrick, pointInter);
     }
+
+    grid_->set_detail_center(grid_->worldToIndex(o()));
 }
 
 void MegoPlayer::walk(glm::vec3 v, GLfloat speed) {
@@ -113,14 +115,16 @@ void MegoPlayer::putBrick(glm::ivec3 worldPointBrick, glm::vec3 pointInter) {
         // placed successfully
         glm::ivec3 cell
             = grid_->localCellPlace(worldPointBrick, pointInter, item);
-        item_count_[item]--;
-        // failed
-        if (!placeFree(o())) {
-            grid_->localCellPlace(cell, Grid::CELL_EMPTY);
-            item_count_[item]++;
+        if (cell.x > 0) {
+            item_count_[item]--;
+            // failed
+            if (!placeFree(o())) {
+                grid_->localCellPlace(cell, Grid::CELL_EMPTY);
+                item_count_[item]++;
+            }
+            // erase when empty
+            if (item_count_[item] <= 0)
+                item_count_.erase(item);
         }
-        // erase when empty
-        if (item_count_[item] <= 0)
-            item_count_.erase(item);
     }
 }

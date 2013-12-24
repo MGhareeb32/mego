@@ -3,10 +3,10 @@
 MegoWorld::MegoWorld() {
     game::mouseLock(GL_TRUE);
     glutSetCursor(GLUT_CURSOR_CROSSHAIR);
-    game::sceneColorSet(glm::vec3(0.1f, 0.1f, 0.1f));
-    game::fogSet(glm::vec4(0.1f, 0.1f, 0.1f, 1.f), .1f);
+    game::sceneColorSet(glm::vec3(0.1f, 0.1f, .1f));
+    game::fogSet(glm::vec4(0.4f, 0.6f, 1.f, 1.f), .1f);
     // load map
-    grid_ = new Grid("res/megoworld/map.in");
+    grid_ = new Grid("res/megoworld/level.map");
     addChild("grid", grid_);
     // camera
     player_ = new MegoPlayer(grid_);
@@ -65,7 +65,8 @@ void MegoWorld::updateTitle(){
 
 void MegoWorld::checkGameEnd(){
     // win
-    if (grid_->worldCell(grid_->getTarget()) != Grid::CELL_TARGET){
+    if (grid_->getTarget().x > 0
+        && grid_->worldCell(grid_->getTarget()) != Grid::CELL_TARGET) {
         MessageBox(NULL, "Win GAME!", "SEE U!", 0);
         exit(EXIT_SUCCESS);
     }

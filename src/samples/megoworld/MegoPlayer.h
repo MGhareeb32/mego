@@ -30,10 +30,6 @@ public:
         for (GLint i = 0; i < 3; i++) {
             glm::vec3 vFoot = v + grid_->indexToWorld(glm::ivec3(0, 0, i));
             vFoot.z += Grid::SZ.z;
-            for (int i = 0; i < 12; ++i)
-                if (grid_->worldCell
-                        (vFoot + Grid::CRNR[i] * .4f * Grid::SZ) > 0)
-                    return false;
             for (int i = 0; i < 6; ++i)
                 if (grid_->worldCell
                         (vFoot + Grid::DIR[i] * .4f * Grid::SZ) > 0)
@@ -60,7 +56,8 @@ public:
             if (testBrick->getIntersect(eye_->o(), eye_->n())) {
                 p = testBrick->getNearestIntersect(eye_->o(), eye_->n());
                 // makes sure it's in front of the camera
-                GLfloat cosAngle = glm::dot(glm::normalize(eye_->o() - p), eye_->n());
+                GLfloat cosAngle
+                    = glm::dot(glm::normalize(eye_->o() - p), eye_->n());
                 GLfloat dist = glm::distance(eye_->o(), p);
                 if (cosAngle > 0 && dist < minDist) {
                     minDist = dist;

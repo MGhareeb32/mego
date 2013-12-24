@@ -77,7 +77,7 @@ void setUniformProjMatrix(glm::mat4 m) {
 }
 
 void fogSet(glm::vec4 color, GLfloat mag) {
-    glUniform3f(unifrom_scene_color_, color.x, color.y, color.z);
+    glClearColor(color.x, color.y, color.z, 1.f);
     glUniform1f(unifrom_scene_fog_, mag);
 }
 
@@ -128,7 +128,7 @@ Entity* sceneGet() {
 }
 
 void sceneColorSet(glm::vec3 color) {
-    glClearColor(color.x, color.y, color.z, 1.f);
+    glUniform3f(unifrom_scene_color_, color.x, color.y, color.z);
 }
 
 // CAMERA
