@@ -4,6 +4,7 @@
 #include "OpenGL.h"
 #include "Entity.h"
 #include "Camera.h"
+#include "NavCamera.h"
 #include "Light.h"
 #include "resource/Mesh.h"
 #include "MeshEntity.h"

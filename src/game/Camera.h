@@ -17,7 +17,7 @@ public:
     void ortho(GLfloat xleft = -1, GLfloat xright = 1,
                GLfloat ybottom = -1, GLfloat ytop = 1,
                GLfloat znear = 1, GLfloat zfar = 8);
-    void persp(GLfloat fov = 50, GLfloat aspect = 1,
+    void persp(GLfloat fov = 50, GLfloat aspect = 1.f,
                GLfloat n = .01f, GLfloat f = 100);
 
     glm::mat4 getProjectionMatrix() { return proj_; }
@@ -25,7 +25,8 @@ public:
 
     glm::vec3 arcballVector(glm::vec2 p, glm::vec3 off);
     glm::mat4 arcballRotation(glm::vec2 p1, glm::vec2 p2, glm::vec3 off);
-    glm::mat4 fpsRotation(glm::vec2 delta, GLboolean flipY);
+    glm::mat4 fpsRotation(glm::vec2 delta, GLboolean flipY,
+                          GLboolean allowFlip);
 };
 
 }

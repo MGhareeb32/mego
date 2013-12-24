@@ -83,7 +83,8 @@ glm::mat4 Camera::arcballRotation(glm::vec2 p1, glm::vec2 p2, glm::vec3 off) {
     return trans * transform_i();
 }
 
-glm::mat4 Camera::fpsRotation(glm::vec2 delta, GLboolean flipY) {
+glm::mat4 Camera::fpsRotation(glm::vec2 delta, GLboolean flipY,
+                              GLboolean allowFlip) {
     glm::vec2 d = glm::degrees(game::mouse_pos_ - game::mouse_pos_prev_);
     if (!flipY)
         d.x *= -1.f;
@@ -99,7 +100,7 @@ glm::mat4 Camera::fpsRotation(glm::vec2 delta, GLboolean flipY) {
     glm::vec3 newN_xy = glm::vec3(n().x, n().y, 0);
     GLfloat cosAngle = glm::dot(newN_xy, oldN_xy);
     rotate(-d.x, glm::vec3(0, 0, 1), o());
-    if (cosAngle < 0)
+    if (!allowFlip && cosAngle < 0)
         return glm::mat4(1);
     return trans * transform_i();
 }

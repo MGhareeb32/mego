@@ -45,7 +45,7 @@ void MegoPlayer::update() {
 
     // fps controls
     glm::vec2 delta = game::mouse_pos_ - game::mouse_pos_prev_;
-    eye_->transform(eye_->fpsRotation(speed * delta, GL_FALSE));
+    eye_->transform(eye_->fpsRotation(speed * delta, GL_FALSE, GL_FALSE));
 
     // gravity
     falling_ = placeFree(o() + glm::vec3(0, 0, zspeed_ - ht_ * .3f));
@@ -79,7 +79,7 @@ void MegoPlayer::update() {
 void MegoPlayer::walk(glm::vec3 v, GLfloat speed) {
     // new position
     v.z = 0;
-    v = SPEED * RD * speed * glm::normalize(v);
+    v = SPEED * RD * (.5f + .5f * !falling_) * speed * glm::normalize(v);
     // x
     glm::vec3 dX = glm::vec3(v.x, 0, 0);
     glm::vec3 nextOX = o() + dX;

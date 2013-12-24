@@ -20,9 +20,11 @@ std::ostream &operator<<(std::ostream &out, const glm::vec4 &vec) {
 
 namespace game {
 
+GLint unifrom_show_backface_;
+
 GLint unifrom_model_matrix_, unifrom_view_matrix_, unifrom_proj_matrix_;
 
-GLint unifrom_scene_color_, unifrom_scene_fog_;
+GLint unifrom_scene_color_, unifrom_scene_fog_mag_, unifrom_scene_fog_color_;
 
 std::vector<Light*> lights;
 GLint unifrom_lights_[NUM_LIGHTS];
@@ -42,7 +44,6 @@ GLint global_time_;
 
 game::Entity* scene_;
 game::Camera* camera_;
-
 
 // SCREEN
 
@@ -64,6 +65,10 @@ glm::vec2 screen_scale(glm::vec2 p) {
 
 // OPENGL
 
+void setUniformShowBackface(GLboolean b) {
+    glUniform1i(unifrom_show_backface_, b);
+}
+
 void setUniformModelMatrix(glm::mat4 m) {
     glUniformMatrix4fv(unifrom_model_matrix_, 1, GL_FALSE, &m[0][0]);
 }
@@ -78,7 +83,8 @@ void setUniformProjMatrix(glm::mat4 m) {
 
 void fogSet(glm::vec4 color, GLfloat mag) {
     glClearColor(color.x, color.y, color.z, 1.f);
-    glUniform1f(unifrom_scene_fog_, mag);
+    glUniform1f(unifrom_scene_fog_mag_, mag);
+    glUniform3fv(unifrom_scene_fog_color_, 1, &color[0]);
 }
 
 void setUniformBlendColor(glm::vec4 c, glm::vec4 b) {
@@ -150,13 +156,16 @@ void init() {
     GLuint program = Angel::InitShader("glsl/vshader.glsl",
                                        "glsl/fshader.glsl");
     glUseProgram(program);
+    // uniform bool backface_show;
+    unifrom_show_backface_ = glGetUniformLocation(program, "show_backface");
     // uniform mat4 model, view, proj;
     unifrom_model_matrix_ = glGetUniformLocation(program, "model");
     unifrom_view_matrix_ = glGetUniformLocation(program, "view");
     unifrom_proj_matrix_ = glGetUniformLocation(program, "proj");
-    // uniform float scene_fog;
-    // uniform vec3 scene_color;
-    unifrom_scene_fog_ = glGetUniformLocation(program, "scene_fog");
+    // uniform float scene_fog_mag;
+    // uniform vec3 scene_fog_color, scene_color;
+    unifrom_scene_fog_mag_ = glGetUniformLocation(program, "scene_fog_mag");
+    unifrom_scene_fog_color_ = glGetUniformLocation(program, "scene_fog_color");
     unifrom_scene_color_ = glGetUniformLocation(program, "scene_color");
     // uniform vec3 lights[NUM_LIGHTS][4];
     for (int i = 0; i < NUM_LIGHTS; ++i) {

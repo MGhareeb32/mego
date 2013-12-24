@@ -12,6 +12,9 @@ extern std::map<GLint, GLboolean> key_down_, key_press_,
 extern GLint key_mod_;
 extern GLint global_time_;
 
+extern glm::vec2 screen_size();
+
+extern void setUniformShowBackface(GLboolean b);
 extern void setUniformModelMatrix(glm::mat4 f);
 extern void setUniformViewMatrix(glm::mat4 f);
 extern void setUniformProjMatrix(glm::mat4 m);

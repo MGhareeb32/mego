@@ -1,7 +1,6 @@
 #include "game/Game.h"
 #include "../src/samples/rubix/RubixCube.h"
 #include "../src/samples/meshviewer/MeshViewer.h"
-#include "../src/samples/cubeworld/CubeWorld.h"
 #include "../src/samples/pointing/Pointing.h"
 #include "../src/samples/megoworld/MegoWorld.h"
 

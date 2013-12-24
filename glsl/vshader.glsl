@@ -10,17 +10,18 @@ layout(location = 2) in vec2 vertexUV;
 
 out mat4 modelView;
 out vec3 fPos;
-out vec3 fNormal;
-
-out vec2 UV;
+out vec3 fN, fE;
+out vec2 fUv;
 
 void main() {
     modelView = view * model;
-    mat4 normal = inverse(transpose(modelView));
 
     fPos = (modelView * vec4(vPos, 1.f)).xyz;
-    fNormal = vNormal;
+    fE = -fPos;
+
+    fN = (modelView * vec4(vNormal, 0.f)).xyz;
+
+    fUv = vertexUV.xy;
 
     gl_Position = proj * vec4(fPos, 1);
-    UV = vertexUV.xy;
 }

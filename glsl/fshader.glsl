@@ -1,11 +1,14 @@
 #version 330 core
 #define NUM_LIGHTS 32
 #define LOG2 1.442695
+//precision mediump float;
+
+uniform bool show_backface;
 
 uniform mat4 model, view, proj;
 
-uniform float scene_fog;
-uniform vec3 scene_color;
+uniform float scene_fog_mag;
+uniform vec3 scene_fog_color, scene_color;
 
 uniform mat4 lights[NUM_LIGHTS];
 
@@ -18,9 +21,9 @@ uniform vec4 blend_factor;
 
 in mat4 modelView;
 in vec3 fPos;
-in vec3 fNormal;
+in vec3 fN, fE;
+in vec2 fUv;
 
-in vec2 UV;
 
 uniform sampler2D myTextureSampler;
 
@@ -43,25 +46,25 @@ vec3 hsv2rgb(vec3 c) {
 
 void main() {
     // TEXTURES
-    vec4 tex = texture_flag ? texture2D(myTextureSampler, UV) : vec4(1);
+    vec4 tex = texture_flag ?
+        texture2D(myTextureSampler, fUv) : vec4(1);
 
     // LIGHT
     vec3 afterLight[NUM_LIGHTS];
-    vec3 fN = (modelView * vec4(fNormal, 0)).xyz;
-    vec3 fE = -fPos;
     vec3 N = normalize(fN);
-    vec3 E = vec3(0, 0, 1);
-    //if (dot(N, E) < 0)
+    vec3 E = normalize(fE);
+    //if (!show_backface && dot(N, E) < 0)
     //    discard;
     for (int i = 0; i < NUM_LIGHTS; ++i) {
-        vec3 fL = (view * vec4(lights[i][3].xyz, 0)).xyz;
-    
-        vec3 L = normalize(fL);
+
+        vec3 L = normalize((view * vec4(lights[i][3].xyz, 1)).xyz - fPos);
         vec3 H = normalize(L + E);
-     
+
         vec3 ambient = lights[i][0].xyz * ka;
         vec3 diffuse = lights[i][1].xyz * kd * max(dot(L, N), 0);
         vec3 specular = lights[i][2].xyz * ks * pow(max(dot(N, H), 0), ns);
+        
+     //   specular *= (dot(L, N) < 0 ? 0.f : 1.f);
 
         afterLight[i] = (ambient + diffuse) * tex.xyz + specular;
     }
@@ -70,8 +73,9 @@ void main() {
         finalAfterLight += afterLight[i];
 
     // FOG
-    vec3 afterFog = mix(finalAfterLight, scene_color,
-                        clamp(length(fPos) * scene_fog - 8, 0, 1));
+    float depth = length((proj * vec4(fPos, 1)).xyz);
+    vec3 afterFog = mix(finalAfterLight, scene_fog_color,
+                        clamp(depth * scene_fog_mag - 8, 0, 1));
 
     gl_FragColor = vec4(afterFog, tr * tex.w * blend_color.w);
 }

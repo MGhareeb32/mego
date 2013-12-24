@@ -2,14 +2,16 @@
 using namespace std;
 
 Pointing::Pointing() {
-    game::sceneColorSet(glm::vec3(0.2f, 0.2f, 0.2f));
-    game::fogSet(glm::vec4(0.1f, 0.1f, 0.1f, 1.f), .1f);
+    game::sceneColorSet(glm::vec3(0.1f, 0.1f, 0.1f));
+    game::fogSet(glm::vec4(0.15f, 0.15f, 0.15f, 1.f), .1f);
     cam_ = new game::Camera();
+    cam_->lookAt(glm::vec3(.6f, .3f, .1f), glm::vec3(0, 0, 0),
+                 glm::vec3(0, 0, 1));
+    cam_->persp(50, game::screen_size().x / game::screen_size().y);
     game::cameraSet(cam_);
     game::mouseLock(GL_TRUE);
     glutSetCursor(GLUT_CURSOR_CROSSHAIR);
-    // axes
-    scale(glm::vec3(.5f, .5f, .5f));
+    game::setUniformShowBackface(GL_TRUE);
     // obj
     std::ifstream input("res/pointing/map.in");
     int xlength, ylength, zlength;
@@ -22,17 +24,17 @@ Pointing::Pointing() {
                 input >> exist;
                 if (exist) {
                     game::MeshEntity *newEntity
-                        = new game::MeshEntity("res/viewer/batman.obj",
+                        = new game::MeshEntity("res/pointing/batman.obj",
                                                "res/viewer/batman.mtl",
                                                "res/viewer/batman.png");
                     string name = "newEntity_";
                     name.append(1, (nextBlock++) + '0');
                     addChild(name, newEntity);
-//                    newEntity->scale(glm::vec3(.05f, .05f, .05f));
                     newEntity->scale(glm::vec3(.2f, .2f, .2f));
-                    newEntity->rotate(90, glm::vec3(1, 0, 0));
                     newEntity->rotate(-45, glm::vec3(0, 0, 1));
-                    newEntity->translate(glm::vec3((x - xlength / 2) * .2f, (y - ylength / 2) * .2f, (z - zlength / 2) * .2f));
+                    newEntity->translate(glm::vec3((x - xlength / 2) * .2f,
+                                                   (y - ylength / 2) * .2f,
+                                                   (z - zlength / 2) * .2f));
                     map_entities_.push_back(newEntity);
                 }
             }
@@ -46,7 +48,7 @@ Pointing::Pointing() {
                                          "res/lamp.mtl");
     light_entity_->scale(glm::vec3(.05f, .05f, .05f));
     light_->addChild("light", light_entity_);
-    light_->translate(glm::vec3(1.f, .5f, .25f));
+    light_->translate(10000.f * glm::vec3(1.f, -1.f, 1.f));
 }
 
 Pointing::~Pointing() {
@@ -87,7 +89,7 @@ void Pointing::update() {
 
     // fps controls
     glm::vec2 delta = game::mouse_pos_ - game::mouse_pos_prev_;
-    cam_->transform(cam_->fpsRotation(speed * delta, GL_FALSE));
+    cam_->transform(cam_->fpsRotation(speed * delta, GL_FALSE, GL_TRUE));
 
     // pointing
     glm::vec3 point, nearestPoint;
@@ -110,6 +112,6 @@ void Pointing::update() {
     if (pointEntity) {
         if (game::mouse_down_[GLUT_LEFT_BUTTON])
             pointEntity->rotate(5.f, glm::vec3(0, 0, 1), pointEntity->o());
-        pointEntity->mtl()->set_kd(glm::vec3(0.f, .5f, 1.f));
+        pointEntity->mtl()->set_kd(glm::vec3(1.f, 1.f, 3.f));
     }
 }

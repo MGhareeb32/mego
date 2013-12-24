@@ -5,11 +5,11 @@
 
 
 class MeshViewer : public game::MeshEntity {
-    static const GLint N_LIGHT = 1;
+    static const GLint N_LIGHT = 3;
 
-    game::MeshEntity *room_entity_, *obj_entity_, *light_entity_[4];
+    game::Entity *lights_;
+    game::MeshEntity *room_entity_, *obj_entity_;
     game::Camera *cam_;
-    game::Light *light_[N_LIGHT];
 public:
     MeshViewer();
     ~MeshViewer();

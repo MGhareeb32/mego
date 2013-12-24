@@ -5,7 +5,7 @@ RubixCube::RubixCube() {
     flat = (game::Mesh*)game::ResMgr::load("res/rubix/flat-face.obj");
     // initialize faces
     game::Camera *cam = new game::Camera();
-    cam->persp();
+    cam->persp(50, game::screen_size().x / game::screen_size().y);
     game::cameraSet(cam);
     // faces
     for (GLfloat x = -1.f; x <= +1.f; x += 1.f)
@@ -21,9 +21,9 @@ RubixCube::RubixCube() {
     game::lights.push_back(l1);
     l1->translate(glm::vec3(10, 0, 10));
     //
-    game::Light *l2 = new game::Light(glm::vec3(.5f));
+    game::Light *l2 = new game::Light(glm::mat3(1, 1, 1, 0, 0, 0, 1, 1, 1));
     game::lights.push_back(l2);
-    l2->translate(glm::vec3(5, 5, 10));
+    l2->translate(glm::vec3(10, -5, -10));
 }
 
 RubixCube::~RubixCube() {
