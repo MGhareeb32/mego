@@ -30,9 +30,9 @@ public:
         for (GLint i = 0; i < 3; i++) {
             glm::vec3 vFoot = v + grid_->indexToWorld(glm::ivec3(0, 0, i));
             vFoot.z += Grid::SZ.z;
-            for (int i = 0; i < 6; ++i)
+            for (int i = 0; i < 12; ++i)
                 if (grid_->worldCell
-                        (vFoot + Grid::DIR[i] * .4f * Grid::SZ) > 0)
+                        (vFoot + Grid::CRNR[i] * .25f * RD) > 0)
                     return false;
         }
         return true;

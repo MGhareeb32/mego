@@ -38,7 +38,7 @@ const glm::mat4 Grid::SCALEI = glm::scale(SZI);
 
 const GLfloat Grid::GRAVITY = -SZ.z * .04f;
 
-const GLint Grid::INTERACT_RD = 6;
+const GLint Grid::INTERACT_RD = 4;
 const GLint Grid::INTERACT_RD_2 = Grid::INTERACT_RD * INTERACT_RD;
 const GLint Grid::DETAIL_RD = 10;
 const GLint Grid::DETAIL_RD_2 = Grid::DETAIL_RD * DETAIL_RD;

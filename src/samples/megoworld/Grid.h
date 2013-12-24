@@ -111,11 +111,11 @@ public:
         // TODO optimize as to loop on the sphere only
         std::vector<glm::ivec3> out;
         glm::ivec3 pLocal = worldToIndex(p);
-        for (int z = -INTERACT_RD; z <= INTERACT_RD; z++)
+        for (int z = -INTERACT_RD * 2; z <= INTERACT_RD * 2; z++)
             for (int y = -INTERACT_RD; y <= INTERACT_RD; y++)
                 for (int x = -INTERACT_RD; x <= INTERACT_RD; x++) {
                     glm::ivec3 r = glm::ivec3(x, y, z);
-                    if (glm::length2(r) <= INTERACT_RD_2
+                    if (glm::length2(glm::ivec3(x, y, z / 2)) <= INTERACT_RD_2
                         && localCell(pLocal + r) > 0)
                             out.push_back(pLocal + r);
                 }

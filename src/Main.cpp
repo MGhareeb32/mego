@@ -5,8 +5,8 @@
 #include "../src/samples/pointing/Pointing.h"
 #include "../src/samples/megoworld/MegoWorld.h"
 
-const GLfloat DISPLAY_WIDTH = 640;
-const GLfloat DISPLAY_HEIGHT = 640;
+const GLfloat DISPLAY_WIDTH = 1024;
+const GLfloat DISPLAY_HEIGHT = 768;
 const GLfloat DISPLAY_FPS = 30;
 
 int main(int argc, char **argv) {
