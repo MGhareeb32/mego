@@ -35,6 +35,8 @@ public:
     static const glm::mat4 SCALE, SCALEI;
 
     static const GLfloat GRAVITY;
+
+    static const GLint VIEW_RD, VIEW_RD_2;
     static const GLint INTERACT_RD, INTERACT_RD_2;
     static const GLint DETAIL_RD, DETAIL_RD_2;
 

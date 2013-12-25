@@ -4,9 +4,9 @@
 
 uniform mat4 model, view, proj;
 
-layout(location = 0) in vec3 vPos;
-layout(location = 1) in vec3 vNormal;
-layout(location = 2) in vec2 vertexUV;
+in vec3 vPos;
+in vec3 vNormal;
+in vec2 vertexUV;
 
 out mat4 modelView;
 out vec3 fPos;

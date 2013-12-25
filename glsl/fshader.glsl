@@ -1,7 +1,7 @@
 #version 330 core
 #define NUM_LIGHTS 32
 #define LOG2 1.442695
-//precision mediump float;
+precision mediump float;
 
 uniform bool show_backface;
 
@@ -64,7 +64,7 @@ void main() {
         vec3 diffuse = lights[i][1].xyz * kd * max(dot(L, N), 0);
         vec3 specular = lights[i][2].xyz * ks * pow(max(dot(N, H), 0), ns);
         
-     //   specular *= (dot(L, N) < 0 ? 0.f : 1.f);
+        specular *= (dot(L, N) < 0 ? 0.f : 1.f);
 
         afterLight[i] = (ambient + diffuse) * tex.xyz + specular;
     }
@@ -73,9 +73,10 @@ void main() {
         finalAfterLight += afterLight[i];
 
     // FOG
-    float depth = length((proj * vec4(fPos, 1)).xyz);
+    float depth2 = length(proj * vec4(fPos, 1));
+    depth2 *= depth2;
     vec3 afterFog = mix(finalAfterLight, scene_fog_color,
-                        clamp(depth * scene_fog_mag - 8, 0, 1));
+                        clamp(depth2 * scene_fog_mag, 0, 1));
 
     gl_FragColor = vec4(afterFog, tr * tex.w * blend_color.w);
 }

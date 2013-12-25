@@ -38,10 +38,12 @@ const glm::mat4 Grid::SCALEI = glm::scale(SZI);
 
 const GLfloat Grid::GRAVITY = -SZ.z * .04f;
 
+const GLint Grid::VIEW_RD = 20;
+const GLint Grid::VIEW_RD_2 = Grid::VIEW_RD * Grid::VIEW_RD;
 const GLint Grid::INTERACT_RD = 4;
-const GLint Grid::INTERACT_RD_2 = Grid::INTERACT_RD * INTERACT_RD;
-const GLint Grid::DETAIL_RD = 6;
-const GLint Grid::DETAIL_RD_2 = Grid::DETAIL_RD * DETAIL_RD;
+const GLint Grid::INTERACT_RD_2 = Grid::INTERACT_RD * Grid::INTERACT_RD;
+const GLint Grid::DETAIL_RD = 10;
+const GLint Grid::DETAIL_RD_2 = Grid::DETAIL_RD * Grid::DETAIL_RD;
 
 Grid::Grid(std::string file) {
     std::ifstream input(file.c_str());
@@ -110,22 +112,23 @@ Grid::~Grid() {
 }
 
 void Grid::render() {
-    std::cout << game::global_time_ << std::endl;
+    GLfloat r2;
     // TODO optimize as to render on same material bricks at the same time
     // TODO optimize as to render visible faces only
     // draw faces
-    for (int z = 0; z < size_.z; z++)
-        for (int y = 0; y < size_.y; y++)
-            for (int x = 0; x < size_.x; x++)
-                drawCell(x, y, z);
+    for (int z = -VIEW_RD; z <= VIEW_RD; z++)
+        for (int y = -VIEW_RD; y <= VIEW_RD; y++)
+            for (int x = -VIEW_RD; x <= VIEW_RD; x++)
+                if ((r2 = glm::length2(glm::vec3(x, y, z))) <= VIEW_RD_2)
+                    drawCell(x + detail_center_.x,
+                             y + detail_center_.y,
+                             z + detail_center_.z);
     // add detail
-    GLfloat r2;
     for (int z = -DETAIL_RD; z <= DETAIL_RD; z++)
         for (int y = -DETAIL_RD; y <= DETAIL_RD; y++)
-            for (int x = -DETAIL_RD; x <= DETAIL_RD; x++) {
+            for (int x = -DETAIL_RD; x <= DETAIL_RD; x++)
                 if ((r2 = glm::length2(glm::vec3(x, y, z))) <= DETAIL_RD_2)
                     drawCellDetail(x + detail_center_.x,
                                    y + detail_center_.y,
                                    z + detail_center_.z, r2);
-            }
 }

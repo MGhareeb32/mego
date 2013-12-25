@@ -44,8 +44,8 @@ std::vector<std::string> Entity::childrenNames() {
 // TRANSFORMATION
 
 void Entity::resetTransform() {
-    transform_ = def_transform_;
-    transform_i_ = def_transform_i_;
+    transform_ = glm::mat4(1);
+    transform_i_ = glm::mat4(1);
     o_ = glm::vec3(0.f, 0.f, 0.f);
     u_ = glm::vec3(1.f, 0.f, 0.f);
     v_ = glm::vec3(0.f, 1.f, 0.f);

@@ -17,6 +17,8 @@ class MegoPlayer : public game::MeshEntity {
 
     game::Camera *eye_;
 
+//    game::MeshEntity *highlight_brick_;
+//    glm::ivec3 highlight_pos_;
 public:
 
     MegoPlayer(Grid *grid_);

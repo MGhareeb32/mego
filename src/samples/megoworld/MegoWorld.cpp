@@ -6,12 +6,12 @@ MegoWorld::MegoWorld() {
 
     game::mouseLock(GL_TRUE);
     glutSetCursor(GLUT_CURSOR_CROSSHAIR);
-    game::sceneColorSet(glm::vec3(0.1f, 0.1f, .1f));
-    game::fogSet(glm::vec4(0.4f, 0.6f, 1.f, 1.f), .1f);
+    game::sceneColorSet(glm::vec3(0.1f, 0.1f, .2f));
+    game::fogSet(glm::vec4(0.4f, 0.6f, 1.f, 1.f), .15f);
     game::setUniformShowBackface(GL_FALSE);
 
     // load map
-    grid_ = new Grid("res/megoworld/level.map");
+    grid_ = new Grid("res/megoworld/map.in");
     addChild("grid", grid_);
     // camera
     player_ = new MegoPlayer(grid_);
@@ -31,13 +31,14 @@ MegoWorld::MegoWorld() {
         int x = lightLen * (i % nLightX);
         int y = lightLen * (i / nLightX);
         // light
-        light_[i] = new game::Light(glm::vec3(2.f / NUM_LIGHT));
+        light_[i] = new game::Light(glm::vec3(1.f / NUM_LIGHT));
         game::lights.push_back(light_[i]);
         // mesh
         light_entity_[i] = new game::MeshEntity("res/lamp.obj", "res/lamp.mtl");
         light_entity_[i]->addChild("light", light_[i]);
         light_entity_[i]->scale(glm::vec3(.01f, .01f, .01f));
-        light_entity_[i]->translate(grid_->indexToWorld(glm::ivec3(x, y, size.z + 32)));
+        light_entity_[i]->translate
+            (grid_->indexToWorld(glm::ivec3(x, y, size.z + 32)));
         // add
         std::stringstream ss;
         ss << "light" << i;

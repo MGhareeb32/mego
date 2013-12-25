@@ -17,6 +17,11 @@ MegoPlayer::MegoPlayer(Grid *grid) : grid_(grid),
     //crouching_ = 1;
 
     item_selected_ = -1;
+
+//    highlight_brick_ = new game::MeshEntity
+//        ("res/megoworld/mego-brick-2.obj");
+//    highlight_pos_ = glm::ivec3(-1, -1, -1);
+//    addChild("high", highlight_brick_);
 }
 
 MegoPlayer::~MegoPlayer() {
@@ -65,12 +70,12 @@ void MegoPlayer::update() {
 
     // pointing
     glm::vec3 pointInter;
-    glm::ivec3 worldPointBrick = gridLocalPointBrick(&pointInter);
-    if (worldPointBrick.x >= 0) {
+    glm::ivec3 highlight_pos_ = gridLocalPointBrick(&pointInter);
+    if (highlight_pos_.x >= 0) {
         if (game::mouse_click_[GLUT_LEFT_BUTTON])
-            pickBrick(worldPointBrick);
+            pickBrick(highlight_pos_);
         if (game::mouse_click_[GLUT_RIGHT_BUTTON])
-            putBrick(worldPointBrick, pointInter);
+            putBrick(highlight_pos_, pointInter);
     }
 
     grid_->set_detail_center(grid_->worldToIndex(o()));
