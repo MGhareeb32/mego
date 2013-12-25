@@ -7,7 +7,7 @@ using namespace game;
 
 MeshViewer::MeshViewer() {
     game::sceneColorSet(glm::vec3(0.1f, 0.1f, 0.1f));
-    game::fogSet(glm::vec4(0.1f, 0.1f, 0.1f, 1.f), .1f);
+    game::fogSet(glm::vec4(0.1f, 0.1f, 0.1f, 1.f), 0.f);
     cam_ = new game::Camera();
     game::cameraSet(cam_);
     cam_->persp(50, game::screen_size().x / game::screen_size().y);
@@ -42,7 +42,6 @@ MeshViewer::MeshViewer() {
         light_entity_->scale(glm::vec3(.05f, .05f, .05f));
         light_entity_->translate(glm::vec3(2.f, 0.f, (i % 3) - 1));
         light_entity_->rotate(360 / N_LIGHT * i, glm::vec3(0, 0, 1));
-        std::cout << "H" << std::endl;
         lights_->addChild(ss.str(), light_entity_);
     }
     addChild("all-lights", lights_);

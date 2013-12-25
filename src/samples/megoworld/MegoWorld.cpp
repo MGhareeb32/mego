@@ -21,7 +21,6 @@ MegoWorld::MegoWorld() {
     // light
     glm::ivec3 size = grid_->size();
     GLint lightArea = size.x * size.y / NUM_LIGHT;
-    std::cout << lightArea << std::endl;
     GLint lightLen = ceil(sqrt(lightArea));
     lightLen = lightLen <= 0 ? 1 : lightLen;
     GLint nLightX = size.x / lightLen;

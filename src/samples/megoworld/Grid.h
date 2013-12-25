@@ -6,7 +6,7 @@
 class Grid : public game::Entity {
 
     GLint ***grid_map_;
-    glm::mat4 ***grid_cell_trans_;
+//    glm::mat4 ***grid_cell_trans_;
     glm::ivec3 spawn_point_, size_;
     GLfloat size_sqrd_;
 
@@ -51,10 +51,11 @@ public:
             return;
         // TODO optimize to put visible faces in some data-structure and update
         // when needed (no processing)
+        glm::mat4 trans = glm::translate(SCALE, glm::vec3(cell));
         for (int j = 0; j < 6; j++)
             if (localCell(cell + glm::ivec3(DIR[j])) <= 0){
                 game::mtlSet(brick_mtl_[grid_map_[z][y][x]]);
-                brick_face_[j]->render(grid_cell_trans_[z][y][x]);
+                brick_face_[j]->render(trans);
             }
     }
 
@@ -65,10 +66,11 @@ public:
         glm::ivec3 cell(x, y, z);
         if (localCell(cell) <= 0)
             return;
+        glm::mat4 trans = glm::translate(SCALE, glm::vec3(cell));
         for (int j = 0; j < 6; j++)
             if (localCell(cell + glm::ivec3(0, 0, 1)) <= 0){
                 game::mtlSet(brick_mtl_[grid_map_[z][y][x]]);
-                brick_face_detail_->render(grid_cell_trans_[z][y][x]);
+                brick_face_detail_->render(trans);
             }
     }
 

@@ -68,18 +68,18 @@ Grid::Grid(std::string file) {
     input.close();
     std::cout << "map loaded" << std::endl;
     // cells transformations
-    grid_cell_trans_ = new glm::mat4**[(GLint) size_.z];
-    for (int z = 0; z < size_.z; z++) {
-        grid_cell_trans_[z] = new glm::mat4*[(GLint) size_.y];
-        for (int y = 0; y < size_.y; y++) {
-            grid_cell_trans_[z][y] = new glm::mat4[(GLint) size_.x];
-            for (int x = 0; x < size_.x; x++) {
-                glm::ivec3 cell(x, y, z);
-                grid_cell_trans_[z][y][x] = glm::translate(SCALE,
-                        glm::vec3(cell));
-            }
-        }
-    }
+//    grid_cell_trans_ = new glm::mat4**[(GLint) size_.z];
+//    for (int z = 0; z < size_.z; z++) {
+//        grid_cell_trans_[z] = new glm::mat4*[(GLint) size_.y];
+//        for (int y = 0; y < size_.y; y++) {
+//            grid_cell_trans_[z][y] = new glm::mat4[(GLint) size_.x];
+//            for (int x = 0; x < size_.x; x++) {
+//                glm::ivec3 cell(x, y, z);
+//                grid_cell_trans_[z][y][x] = glm::translate(SCALE,
+//                        glm::vec3(cell));
+//            }
+//        }
+//    }
     // prepare box model
     std::stringstream ss;
     for (int i = 0; i < 6; ++i) {

@@ -84,7 +84,7 @@ void MegoPlayer::update() {
 void MegoPlayer::walk(glm::vec3 v, GLfloat speed) {
     // new position
     v.z = 0;
-    v = SPEED * RD * (.5f + .5f * !falling_) * speed * glm::normalize(v);
+    v = SPEED * RD * speed * glm::normalize(v);
     // x
     glm::vec3 dX = glm::vec3(v.x, 0, 0);
     glm::vec3 nextOX = o() + dX;
