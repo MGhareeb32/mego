@@ -1,5 +1,3 @@
-#version 330 core
-
 #define M_PI 3.1415926535897932384626433832795
 
 uniform mat4 model, view, proj;
@@ -8,10 +6,10 @@ in vec3 vPos;
 in vec3 vNormal;
 in vec2 vertexUV;
 
-out mat4 modelView;
-out vec3 fPos;
-out vec3 fN, fE;
-out vec2 fUv;
+varying mat4 modelView;
+varying vec3 fPos;
+varying vec3 fN, fE;
+varying vec2 fUv;
 
 void main() {
     modelView = view * model;
