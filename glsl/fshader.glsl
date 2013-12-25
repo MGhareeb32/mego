@@ -1,6 +1,6 @@
 #version 330 core
 
-#define NUM_LIGHTS 32
+#define NUM_LIGHTS 4
 #define LOG2 1.442695
 precision mediump float;
 
@@ -52,8 +52,8 @@ void main() {
     vec3 afterLight[NUM_LIGHTS];
     vec3 N = normalize(fN);
     vec3 E = normalize(fE);
-//    if (!show_backface && dot(N, E) < 0)
-//        discard;
+    if (!show_backface && dot(N, E) < 0)
+        discard;
     for (int i = 0; i < NUM_LIGHTS; ++i) {
 
         vec3 L = normalize((view * vec4(lights[i][3].xyz, 1)).xyz - fPos);

@@ -7,7 +7,7 @@ MegoWorld::MegoWorld() {
     game::mouseLock(GL_TRUE);
     glutSetCursor(GLUT_CURSOR_CROSSHAIR);
     game::sceneColorSet(glm::vec3(0.1f, 0.1f, .2f));
-    game::fogSet(glm::vec4(0.4f, 0.6f, 1.f, 1.f), .15f);
+    game::fogSet(glm::vec4(0.4f, 0.6f, 1.f, 1.f), .05f);
     game::setUniformShowBackface(GL_FALSE);
 
     // load map

@@ -38,7 +38,7 @@ const glm::mat4 Grid::SCALEI = glm::scale(SZI);
 
 const GLfloat Grid::GRAVITY = -SZ.z * .04f;
 
-const GLint Grid::VIEW_RD = 20;
+const GLint Grid::VIEW_RD = 32;
 const GLint Grid::VIEW_RD_2 = Grid::VIEW_RD * Grid::VIEW_RD;
 const GLint Grid::INTERACT_RD = 4;
 const GLint Grid::INTERACT_RD_2 = Grid::INTERACT_RD * Grid::INTERACT_RD;
@@ -67,19 +67,6 @@ Grid::Grid(std::string file) {
     }
     input.close();
     std::cout << "map loaded" << std::endl;
-    // cells transformations
-//    grid_cell_trans_ = new glm::mat4**[(GLint) size_.z];
-//    for (int z = 0; z < size_.z; z++) {
-//        grid_cell_trans_[z] = new glm::mat4*[(GLint) size_.y];
-//        for (int y = 0; y < size_.y; y++) {
-//            grid_cell_trans_[z][y] = new glm::mat4[(GLint) size_.x];
-//            for (int x = 0; x < size_.x; x++) {
-//                glm::ivec3 cell(x, y, z);
-//                grid_cell_trans_[z][y][x] = glm::translate(SCALE,
-//                        glm::vec3(cell));
-//            }
-//        }
-//    }
     // prepare box model
     std::stringstream ss;
     for (int i = 0; i < 6; ++i) {

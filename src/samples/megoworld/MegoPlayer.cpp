@@ -6,7 +6,7 @@ MegoPlayer::MegoPlayer(Grid *grid) : grid_(grid),
     eye_ = new game::Camera();
     addChild("eye", eye_);
 
-    eye_->persp(80, game::screen_size().x / game::screen_size().y);
+    eye_->persp(70, game::screen_size().x / game::screen_size().y);
     eye_->lookAt(glm::vec3(0, 0, 0),
                  glm::vec3(1.f, .5f, 0),
                  glm::vec3(0, 0, 1));
