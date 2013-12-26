@@ -21,7 +21,7 @@ MeshViewer::MeshViewer() {
     addChild("room", room_entity_);
 
     // obj
-    obj_entity_ = new game::MeshEntity("res/viewer/teapot.obj",
+    obj_entity_ = new game::MeshEntity("res/viewer/batman.obj",
                                        "res/viewer/teapot.mtl");
     obj_entity_->rotate(-60, glm::vec3(0, 0, 1));
     obj_entity_->scale(glm::vec3(.5f, .5f, .5f));
@@ -33,7 +33,10 @@ MeshViewer::MeshViewer() {
         std::stringstream ss;
         ss << "light" << i;
         // light
-        game::Light *light_ = new game::Light(glm::vec3(1.5f / N_LIGHT));
+        game::Light *light_
+            = new game::Light(glm::vec3(i % 3 == 0 ? 1 : 0,
+                                        i % 3 == 1 ? 1 : 0,
+                                        i % 3 == 2 ? 1 : 0) * (2.f / N_LIGHT));
         game::lights.push_back(light_);
         // mesh
         game::MeshEntity *light_entity_

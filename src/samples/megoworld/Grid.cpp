@@ -26,7 +26,6 @@ const glm::vec3 Grid::CRNR[12] = {
 
 const GLint Grid::CELL_BAD = -1;
 const GLint Grid::CELL_EMPTY = 0;
-const GLint Grid::CELL_TARGET = NUM_CELL_COLORS - 1;
 const GLint Grid::MAX_TIME = 5000;
 
 const glm::vec3 Grid::SZ = glm::vec3(.1f, .1f, 0.05f);
@@ -40,10 +39,10 @@ const GLfloat Grid::GRAVITY = -SZ.z * .04f;
 
 const GLint Grid::VIEW_RD = 32;
 const GLint Grid::VIEW_RD_2 = Grid::VIEW_RD * Grid::VIEW_RD;
+const GLint Grid::DETAIL_RD = 8;
+const GLint Grid::DETAIL_RD_2 = Grid::DETAIL_RD * Grid::DETAIL_RD;
 const GLint Grid::INTERACT_RD = 4;
 const GLint Grid::INTERACT_RD_2 = Grid::INTERACT_RD * Grid::INTERACT_RD;
-const GLint Grid::DETAIL_RD = 10;
-const GLint Grid::DETAIL_RD_2 = Grid::DETAIL_RD * Grid::DETAIL_RD;
 
 Grid::Grid(std::string file) {
     std::ifstream input(file.c_str());
@@ -51,22 +50,32 @@ Grid::Grid(std::string file) {
     input >> size_.x >> size_.y >> size_.z;
     input >> spawn_point_.x >> spawn_point_.y >> spawn_point_.z;
     size_sqrd_ = glm::dot(size_, size_);
-    // cells
-    target_ = glm::vec3(-1, -1, -1);
-    grid_map_ = new GLint**[(GLint) size_.z];
+    // init brick types
+    brick_type_ = new GLint**[(GLint) size_.z];
     for (int z = 0; z < size_.z; z++) {
-        grid_map_[z] = new GLint*[(GLint) size_.y];
+        brick_type_[z] = new GLint*[(GLint) size_.y];
         for (int y = 0; y < size_.y; y++) {
-            grid_map_[z][y] = new GLint[(GLint) size_.x];
-            for (int x = 0; x < size_.x; x++) {
-                input >> grid_map_[z][y][x];
-                if (grid_map_[z][y][x] == Grid::CELL_TARGET)
-                    target_ = indexToWorld(glm::ivec3(x, y, z));
+            brick_type_[z][y] = new GLint[(GLint) size_.x];
+        }
+    }
+    // read
+    for (int z = 0; z < size_.z; z++)
+        for (int y = 0; y < size_.y; y++)
+            for (int x = 0, c; x < size_.x; x++)
+                input >> c, localBrickPlace(glm::ivec3(x, y, z), c);
+    input.close();
+    std::cout << "map loaded" << std::endl;
+    // preprocess transformations
+    brick_trans_ = new glm::mat4**[(GLint) size_.z];
+    for (int z = 0; z < size_.z; z++) {
+        brick_trans_[z] = new glm::mat4*[(GLint) size_.y];
+        for (int y = 0; y < size_.y; y++) {
+            brick_trans_[z][y] = new glm::mat4[(GLint) size_.x];
+            for (int x = 0; x < size_.y; ++x) {
+                brick_trans_[z][y][x] = glm::translate(SCALE, glm::vec3(x, y, z));
             }
         }
     }
-    input.close();
-    std::cout << "map loaded" << std::endl;
     // prepare box model
     std::stringstream ss;
     for (int i = 0; i < 6; ++i) {
@@ -77,7 +86,7 @@ Grid::Grid(std::string file) {
     brick_face_detail_ = (game::Mesh *)game::ResMgr::load
         ("res/megoworld/mego-brick-face-detail.obj");
     // prepare materials
-    for (int i = 1; i < NUM_CELL_COLORS; ++i) {
+    for (int i = 1; i < NUM_BRICK_TYPES; ++i) {
         ss.str("");
         ss << "res/megoworld/mego-brick-mat-" << i << ".mtl";
         brick_mtl_[i] = (game::Material *) game::ResMgr::load(ss.str());
@@ -85,17 +94,15 @@ Grid::Grid(std::string file) {
             (game::Texture *) game::ResMgr::load
                 ("res/megoworld/mego-brick-tex.png"));
     }
-    // initialize timer
-    timer_ = target_.x < 0 ? -1 : Grid::MAX_TIME;
 }
 
 Grid::~Grid() {
     for (int z = 0; z < size_.z; z++) {
         for (int y = 0; y < size_.y; y++)
-            delete[] grid_map_[z][y];
-        delete[] grid_map_[z];
+            delete[] brick_type_[z][y];
+        delete[] brick_type_[z];
     }
-    delete[] grid_map_;
+    delete[] brick_type_;
 }
 
 void Grid::render() {
@@ -103,19 +110,16 @@ void Grid::render() {
     // TODO optimize as to render on same material bricks at the same time
     // TODO optimize as to render visible faces only
     // draw faces
-    for (int z = -VIEW_RD; z <= VIEW_RD; z++)
+    for (int z = -VIEW_RD * 2; z <= VIEW_RD * 2; z++)
         for (int y = -VIEW_RD; y <= VIEW_RD; y++)
-            for (int x = -VIEW_RD; x <= VIEW_RD; x++)
-                if ((r2 = glm::length2(glm::vec3(x, y, z))) <= VIEW_RD_2)
-                    drawCell(x + detail_center_.x,
-                             y + detail_center_.y,
-                             z + detail_center_.z);
-    // add detail
-    for (int z = -DETAIL_RD; z <= DETAIL_RD; z++)
-        for (int y = -DETAIL_RD; y <= DETAIL_RD; y++)
-            for (int x = -DETAIL_RD; x <= DETAIL_RD; x++)
-                if ((r2 = glm::length2(glm::vec3(x, y, z))) <= DETAIL_RD_2)
-                    drawCellDetail(x + detail_center_.x,
-                                   y + detail_center_.y,
-                                   z + detail_center_.z, r2);
+            for (int x = -VIEW_RD; x <= VIEW_RD; x++) {
+                drawBrick(x + detail_center_.x,
+                          y + detail_center_.y,
+                          z + detail_center_.z);
+                r2 = glm::length2(glm::vec3(x, y, z / 2));
+                if (r2 <= DETAIL_RD_2)
+                    drawBrickDetail(x + detail_center_.x,
+                                    y + detail_center_.y,
+                                    z + detail_center_.z, r2);
+            }
 }

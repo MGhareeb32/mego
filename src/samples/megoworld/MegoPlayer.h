@@ -33,7 +33,7 @@ public:
             glm::vec3 vFoot = v + grid_->indexToWorld(glm::ivec3(0, 0, i));
             vFoot.z += Grid::SZ.z;
             for (int i = 0; i < 12; ++i)
-                if (grid_->worldCell
+                if (grid_->worldBrick
                         (vFoot + Grid::CRNR[i] * .25f * RD) > 0)
                     return false;
         }
@@ -41,14 +41,14 @@ public:
     }
 
     glm::ivec3 gridLocalPointBrick(glm::vec3 *pointInter) {
-        glm::ivec3 nearestCell = glm::ivec3(-1, -1, -1);
+        glm::ivec3 nearestBrick = glm::ivec3(-1, -1, -1);
         // TODO make static
         game::MeshEntity *testBrick
             = new game::MeshEntity("res/megoworld/mego-brick-1.obj");
-        std::vector<glm::ivec3> cells = grid_->worldCloseCells(o());
+        std::vector<glm::ivec3> cells = grid_->worldCloseBricks(o());
         glm::vec3 p;
         GLfloat minDist = std::numeric_limits<GLfloat>::infinity();
-        glm::ivec3 pointCell;
+        glm::ivec3 pointBrick;
         for (std::size_t i = 0; i < cells.size(); ++i) {
             // translate
             glm::ivec3 cell = cells[i];
@@ -63,7 +63,7 @@ public:
                 GLfloat dist = glm::distance(eye_->o(), p);
                 if (cosAngle > 0 && dist < minDist) {
                     minDist = dist;
-                    nearestCell = cell;
+                    nearestBrick = cell;
                     pointInter->x = p.x;
                     pointInter->y = p.y;
                     pointInter->z = p.z;
@@ -71,7 +71,7 @@ public:
             }
         }
         delete testBrick;
-        return nearestCell;
+        return nearestBrick;
     }
 
     // walk

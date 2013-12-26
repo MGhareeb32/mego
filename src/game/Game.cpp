@@ -33,7 +33,7 @@ GLint unifrom_mtl_ka_, unifrom_mtl_kd_, unifrom_mtl_ks_;
 GLint unifrom_mtl_ns_, unifrom_mtl_tr_;
 GLint unifrom_texture_flag_;
 
-GLint unifrom_blend_color_, unifrom_blend_factor_ , unifrom_texture;
+GLint unifrom_texture;
 
 std::map<GLint, GLboolean> mouse_down_, mouse_click_;
 glm::vec2 mouse_pos_, mouse_pos_prev_;
@@ -85,11 +85,6 @@ void fogSet(glm::vec4 color, GLfloat mag) {
     glClearColor(color.x, color.y, color.z, 1.f);
     glUniform1f(unifrom_scene_fog_mag_, mag);
     glUniform3fv(unifrom_scene_fog_color_, 1, &color[0]);
-}
-
-void setUniformBlendColor(glm::vec4 c, glm::vec4 b) {
-    glUniform4f(unifrom_blend_color_, c.x, c.y, c.z, c.w);
-    glUniform4f(unifrom_blend_factor_, b.x, b.y, b.z, b.w);
 }
 
 // MATERIAL
@@ -185,10 +180,6 @@ void init() {
     unifrom_mtl_ns_ = glGetUniformLocation(program, "ns");
     unifrom_mtl_tr_ = glGetUniformLocation(program, "tr");
     unifrom_texture_flag_ = glGetUniformLocation(program, "texture_flag");
-    // uniform glm::vec3 blend_color;
-    unifrom_blend_color_ = glGetUniformLocation(program, "blend_color");
-    // uniform glm::vec3 blend_factor;
-    unifrom_blend_factor_ = glGetUniformLocation(program, "blend_factor");
     // uniform sampler2D myTextureSampler;
     unifrom_texture = glGetUniformLocation(program, "myTextureSampler");
 
@@ -255,8 +246,6 @@ void mouseButton(GLint mouseBtn, GLint isRelease, GLint x, GLint y) {
 void display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
-    game::setUniformBlendColor(glm::vec4(1, 1, 1, 1),
-                               glm::vec4(0.f, 0.f, 0.f, 0.f));
 
     if (camera_)
         setUniformViewMatrix(camera_->getViewMatrix()),

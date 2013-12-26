@@ -6,8 +6,8 @@ MegoWorld::MegoWorld() {
 
     game::mouseLock(GL_TRUE);
     glutSetCursor(GLUT_CURSOR_CROSSHAIR);
-    game::sceneColorSet(glm::vec3(0.1f, 0.1f, .2f));
-    game::fogSet(glm::vec4(0.4f, 0.6f, 1.f, 1.f), .05f);
+    game::sceneColorSet(glm::vec3(0.05f, 0.05f, .05f));
+    game::fogSet(glm::vec4(0.5f, 0.8f, 1.f, 1.f), .05f);
     game::setUniformShowBackface(GL_FALSE);
 
     // load map
@@ -47,48 +47,4 @@ MegoWorld::MegoWorld() {
 }
 
 MegoWorld::~MegoWorld() {
-}
-
-int MegoWorld::calcPlayerTargetDist(){
-    glm::vec3 diff = (player_->o() - grid_->getTarget());
-    return ((int) (std::sqrt(diff[0] * diff[0] + diff[1] * diff[1] + diff[2]
-            * diff[2]) / ((Grid::SZ[0]+Grid::SZ[1])/2)));
-}
-
-std::string toTimeFormat(int time){
-    int mins = time/60;
-    int secs = time%60;
-    std::stringstream timeFormat;
-    timeFormat << ((mins < 10)?"0":"") << mins
-               << ":" << ((secs < 10)?"0":"") << secs;
-    return timeFormat.str();
-}
-
-
-void MegoWorld::updateTitle(){
-    std::stringstream title;
-    title << "You are " << calcPlayerTargetDist()
-          << " away from the treasure. " << toTimeFormat(grid_->getTimer())
-          << " remaining";
-    glutSetWindowTitle(title.str().c_str());
-}
-
-void MegoWorld::checkGameEnd() {
-    // win
-    if (grid_->getTarget().x > 0
-        && grid_->worldCell(grid_->getTarget()) != Grid::CELL_TARGET) {
-        MessageBox(NULL, "Win GAME!", "SEE U!", 0);
-        exit(EXIT_SUCCESS);
-    }
-    // lose
-    if (grid_->getTimer() == 0){
-        MessageBox(NULL, "TIME OVER, LOSER!", "SEE U!", 0);
-        exit(EXIT_SUCCESS);
-    }
-}
-
-void MegoWorld::update() {
-    updateTitle();
-    checkGameEnd();
-    Entity::update();
 }

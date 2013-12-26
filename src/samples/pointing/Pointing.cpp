@@ -2,8 +2,8 @@
 using namespace std;
 
 Pointing::Pointing() {
-    game::sceneColorSet(glm::vec3(0.1f, 0.1f, 0.1f));
-    game::fogSet(glm::vec4(0.15f, 0.15f, 0.15f, 1.f), .1f);
+    game::sceneColorSet(glm::vec3(0.f, 0.f, 0.f));
+    game::fogSet(glm::vec4(0.1f, 0.1f, 0.1f, 1.f), .1f);
     cam_ = new game::Camera();
     cam_->lookAt(glm::vec3(.6f, .3f, .1f), glm::vec3(0, 0, 0),
                  glm::vec3(0, 0, 1));
@@ -40,7 +40,7 @@ Pointing::Pointing() {
             }
     }
     // light
-    light_ = new game::Light(glm::vec3(.8f));
+    light_ = new game::Light(glm::vec3(1.f));
     addChild("light", light_);
     game::lights.push_back(light_);
     //
@@ -111,7 +111,9 @@ void Pointing::update() {
     }
     if (pointEntity) {
         if (game::mouse_down_[GLUT_LEFT_BUTTON])
-            pointEntity->rotate(5.f, glm::vec3(0, 0, 1), pointEntity->o());
+            pointEntity->rotate(+5.f, glm::vec3(0, 0, 1), pointEntity->o());
+        else if (game::mouse_down_[GLUT_RIGHT_BUTTON])
+            pointEntity->rotate(-5.f, glm::vec3(0, 0, 1), pointEntity->o());
         pointEntity->mtl()->set_kd(glm::vec3(1.f, 1.f, 3.f));
     }
 }

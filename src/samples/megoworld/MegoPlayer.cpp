@@ -99,11 +99,11 @@ void MegoPlayer::walk(glm::vec3 v, GLfloat speed) {
 
 void MegoPlayer::jump() {
     if (!falling_)
-        zspeed_ = SPEED * .25f;
+        zspeed_ = SPEED * .28f;
 }
 
 void MegoPlayer::pickBrick(glm::ivec3 worldPointBrick) {
-    GLint brick = grid_->worldCellHit(worldPointBrick);
+    GLint brick = grid_->worldBrickHit(worldPointBrick);
     if (brick > 0)
         item_count_[brick]++;
 }
@@ -119,12 +119,12 @@ void MegoPlayer::putBrick(glm::ivec3 worldPointBrick, glm::vec3 pointInter) {
     if (item_count_.find(item) != item_count_.end() && item_count_[item] > 0) {
         // placed successfully
         glm::ivec3 cell
-            = grid_->localCellPlace(worldPointBrick, pointInter, item);
+            = grid_->localBrickPlace(worldPointBrick, pointInter, item);
         if (cell.x > 0) {
             item_count_[item]--;
             // failed
             if (!placeFree(o())) {
-                grid_->localCellPlace(cell, Grid::CELL_EMPTY);
+                grid_->localBrickPlace(cell, Grid::CELL_EMPTY);
                 item_count_[item]++;
             }
             // erase when empty

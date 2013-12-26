@@ -21,7 +21,6 @@ class MegoWorld : public game::MeshEntity {
 public:
     MegoWorld();
     ~MegoWorld();
-    void update();
 };
 
 #endif

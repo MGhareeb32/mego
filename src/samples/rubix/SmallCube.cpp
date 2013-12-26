@@ -81,7 +81,7 @@ CubeFace::~CubeFace() {
 }
 
 void CubeFace::render(bool selected) {
-    float f = selected ? .8f + sin(game::global_time_ / 5.0) * .2f : 1.f;
-    game::setUniformBlendColor(glm::vec4(0, 0, 0, f), glm::vec4(0, 0, 0, 1));
+    GLfloat f = selected ? .8f + sin(game::global_time_ / 5.0) * .2f : 1.f;
+    mtl()->set_tr(f);
     game::MeshEntity::render();
 }
