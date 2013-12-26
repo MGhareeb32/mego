@@ -4,8 +4,10 @@ MegoPlayer::MegoPlayer(Grid *grid) : grid_(grid),
     RD(.5f * grid_->SZ.x), HT(1.5f * grid_->SZ.z), SPEED(.1f) {
 
     eye_ = new game::Camera();
+    eye_->lookAt(glm::vec3(0, 1, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
     addChild("eye", eye_);
 
+    // align camera
     eye_->persp(70, game::screen_size().x / game::screen_size().y);
     eye_->lookAt(glm::vec3(0, 0, 0),
                  glm::vec3(1.f, .5f, 0),
@@ -27,6 +29,17 @@ MegoPlayer::MegoPlayer(Grid *grid) : grid_(grid),
     highlight_brick_mtl_->set_texture((game::Texture *)game::ResMgr::load
             ("res/megoworld/mego-brick-highlight.png"));
     highlight_pos_ = glm::ivec3(-1, -1, -1);
+
+    // arm
+    game::MeshEntity *arm
+        = new game::MeshEntity("res/megoworld/mego-man-arm.obj",
+                               "res/megoworld/mego-man-skin.mtl");
+    arm->scale(Grid::SZ);
+    arm->scale(.5f * glm::vec3(1, 1, 2));
+    arm->rotate(-100, glm::vec3(0, 0, 1));
+    arm->rotate(55, glm::vec3(-1, 1, 0));
+    arm->translate(glm::vec3(.12f, .01f, 0.04f));
+    eye_->addChild("rarm", arm);
 }
 
 MegoPlayer::~MegoPlayer() {

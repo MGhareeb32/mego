@@ -9,19 +9,26 @@ namespace game {
 class MeshEntity : public Entity {
     Mesh *mesh_;
     Material *mtl_;
+    GLboolean depth_test_;
 public:
     MeshEntity(Mesh *m = NULL) : Entity() {
         mesh_ = m;
         mtl_ = NULL;
+        depth_test_ = true;
     };
+
     MeshEntity(std::string mesh, std::string mtl = "",
                std::string texture = "") : Entity() {
+        depth_test_ = true;
         mesh_ = (Mesh*)ResMgr::load(mesh);
         if (mtl.size())
             mtl_ = new Material(*(Material*)ResMgr::load(mtl));
-        if (texture.size())
+        else
+            mtl_ = NULL;
+        if (mtl_ && texture.size())
             mtl_->set_texture((Texture*)ResMgr::load(texture));
     };
+
     ~MeshEntity() {};
 
     Mesh* mesh() { return mesh_; }
@@ -32,8 +39,13 @@ public:
             mtl_->~Material();
         mtl_ = mtl;
     }
+    void set_depth_test(GLboolean depth_test) { depth_test_ = depth_test; }
 
     virtual void render() {
+        if (depth_test_)
+            glEnable(GL_DEPTH_TEST);
+        else
+            glDisable(GL_DEPTH_TEST);
         // render self
         if (mtl_)
             mtlSet(mtl_);

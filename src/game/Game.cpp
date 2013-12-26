@@ -298,7 +298,7 @@ void init(int argc, char **argv, GLint w, GLint h, std::string t) {
     std::cout.precision(4);
 
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GL_MULTISAMPLE);
     glutInitWindowSize(w, h);
     screen_size_ = glm::vec2(w, h);
 

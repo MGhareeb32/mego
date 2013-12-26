@@ -46,6 +46,12 @@ public:
         n_ = glm::vec3(m * glm::vec4(n_, 0.f));
         u_ = glm::vec3(m * glm::vec4(u_, 0.f));
         v_ = glm::vec3(m * glm::vec4(v_, 0.f));
+        //
+        std::map<std::string, Entity*>::iterator ch = children_.begin();
+        while (ch != children_.end()) {
+            ch->second->transform(m);
+            ch++;
+        }
     }
 
     void translate(glm::vec3 d);

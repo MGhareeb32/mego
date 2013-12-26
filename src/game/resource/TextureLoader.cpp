@@ -9,6 +9,7 @@ Resource* load(std::string file, std::string dir) {
        = SOIL_load_image(file.c_str(), &w, &h, 0, SOIL_LOAD_RGBA);
     Texture *out = new Texture(file, w, h, image);
     SOIL_free_image_data(image);
+    std::cout << "    " << w << "x" << h << std::endl;
     return out;
 }
 

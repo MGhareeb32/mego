@@ -101,7 +101,7 @@ Material *load(std::string fname, std::string dir) {
         }
     }
     in.close();
-
+    std::cout << "    kd=" << kd << " ka=" << ka << std::endl;
     return new Material(fname, ka, kd, ks, ns, tr);
 }
 

@@ -89,7 +89,7 @@ game::Mesh *load(std::string fname, std::string dir) {
         }
     }
     in.close();
-    // data
+    std::cout << "    " << v.size() << " vertices" << std::endl;
     return new game::Mesh(fname, v, vt, vn, idx, GL_TRIANGLES);
 }
 

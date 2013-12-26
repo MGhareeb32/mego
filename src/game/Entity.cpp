@@ -145,7 +145,8 @@ void Entity::render() {
     // render children
     std::map<std::string, Entity*>::iterator ch = children_.begin();
     while (ch != children_.end()) {
-        ch->second->render();
+        if (ch->second)
+            ch->second->render();
         ch++;
     }
 }
