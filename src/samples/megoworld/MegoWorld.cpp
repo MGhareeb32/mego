@@ -7,11 +7,11 @@ MegoWorld::MegoWorld() {
     game::mouseLock(GL_TRUE);
     glutSetCursor(GLUT_CURSOR_CROSSHAIR);
     game::sceneColorSet(glm::vec3(0.05f, 0.05f, .05f));
-    game::fogSet(glm::vec4(0.5f, 0.8f, 1.f, 1.f), .01f);
+    game::fogSet(glm::vec4(0.5f, 0.8f, 1.f, 1.f), .03f);
     game::setUniformShowBackface(GL_FALSE);
 
     // load map
-    grid_ = new Grid("res/megoworld/map.in");
+    grid_ = new Grid("res/megoworld/gen.map");
     addChild("grid", grid_);
     // camera
     player_ = new MegoPlayer(grid_);

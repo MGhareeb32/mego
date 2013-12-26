@@ -112,14 +112,15 @@ void Grid::render() {
     // draw faces
     for (int z = -VIEW_RD * 2; z <= VIEW_RD * 2; z++)
         for (int y = -VIEW_RD; y <= VIEW_RD; y++)
-            for (int x = -VIEW_RD; x <= VIEW_RD; x++) {
+            for (int x = -VIEW_RD; x <= VIEW_RD; x++)
                 drawBrick(x + detail_center_.x,
                           y + detail_center_.y,
                           z + detail_center_.z);
-                r2 = glm::length2(glm::vec3(x, y, z / 2));
-                if (r2 <= DETAIL_RD_2)
+    for (int z = -DETAIL_RD * 2; z <= DETAIL_RD * 2; z++)
+        for (int y = -DETAIL_RD; y <= DETAIL_RD; y++)
+            for (int x = -DETAIL_RD; x <= DETAIL_RD; x++)
+                if ((r2 = glm::length2(glm::vec3(x, y, z / 2))) <= DETAIL_RD_2)
                     drawBrickDetail(x + detail_center_.x,
                                     y + detail_center_.y,
                                     z + detail_center_.z, r2);
-            }
 }

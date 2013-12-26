@@ -13,7 +13,7 @@ MegoPlayer::MegoPlayer(Grid *grid) : grid_(grid),
                  glm::vec3(1.f, .5f, 0),
                  glm::vec3(0, 0, 1));
     eye_->translate(glm::vec3(0.f, 0.f, 0.04f));
-    translate(grid_->indexToWorld(grid_->spawn_point()) + .5f * Grid::SZ);
+    translate(grid_->indexToWorld(glm::ivec3(0, 0, 1)) + .5f * Grid::SZ);
 
     ht_ = falling_ = zspeed_ = 0;
     //crouching_ = 1;
@@ -40,6 +40,9 @@ MegoPlayer::MegoPlayer(Grid *grid) : grid_(grid),
     arm->rotate(55, glm::vec3(-1, 1, 0));
     arm->translate(glm::vec3(.12f, .01f, 0.04f));
     eye_->addChild("rarm", arm);
+
+    translate(grid_->indexToWorld(glm::ivec3(0, 0, -1)) + .5f * Grid::SZ);
+    translate(grid_->indexToWorld(grid_->spawn_point()) + .5f * Grid::SZ);
 }
 
 MegoPlayer::~MegoPlayer() {
@@ -64,6 +67,22 @@ void MegoPlayer::update() {
         walkSideways(-speed);
     if (game::key_down_['d'])
         walkSideways(+speed);
+
+    // item select
+    if (game::key_down_['1'])
+        item_selected_ = 1;
+    if (game::key_down_['2'])
+        item_selected_ = 2;
+    if (game::key_down_['3'])
+        item_selected_ = 3;
+    if (game::key_down_['4'])
+        item_selected_ = 4;
+    if (game::key_down_['5'])
+        item_selected_ = 5;
+    if (game::key_down_['6'])
+        item_selected_ = 6;
+    if (game::key_down_['7'])
+        item_selected_ = 7;
 
     // jump
     if (game::key_press_[' '])
