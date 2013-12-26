@@ -18,13 +18,26 @@ MegoPlayer::MegoPlayer(Grid *grid) : grid_(grid),
 
     item_selected_ = -1;
 
-//    highlight_brick_ = new game::MeshEntity
-//        ("res/megoworld/mego-brick-2.obj");
-//    highlight_pos_ = glm::ivec3(-1, -1, -1);
-//    addChild("high", highlight_brick_);
+    highlight_brick_
+        = (game::Mesh *)game::ResMgr::load
+            ("res/megoworld/mego-brick-highlight.obj");
+    highlight_brick_mtl_
+        = new game::Material(*(game::Material *)game::ResMgr::load
+            ("res/lamp.mtl"));
+    highlight_brick_mtl_->set_texture((game::Texture *)game::ResMgr::load
+            ("res/megoworld/mego-brick-highlight.png"));
+    highlight_pos_ = glm::ivec3(-1, -1, -1);
 }
 
 MegoPlayer::~MegoPlayer() {
+}
+
+void MegoPlayer::render() {
+    if (highlight_pos_.x >= 0) {
+        game::mtlSet(highlight_brick_mtl_);
+        highlight_brick_->render(grid_->brick_trans(highlight_pos_));
+    }
+    game::MeshEntity::render();
 }
 
 void MegoPlayer::update() {
@@ -70,7 +83,7 @@ void MegoPlayer::update() {
 
     // pointing
     glm::vec3 pointInter;
-    glm::ivec3 highlight_pos_ = gridLocalPointBrick(&pointInter);
+    highlight_pos_ = gridLocalPointBrick(&pointInter);
     if (highlight_pos_.x >= 0) {
         if (game::mouse_click_[GLUT_LEFT_BUTTON])
             pickBrick(highlight_pos_);

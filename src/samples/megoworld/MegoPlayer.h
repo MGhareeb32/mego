@@ -17,14 +17,16 @@ class MegoPlayer : public game::MeshEntity {
 
     game::Camera *eye_;
 
-//    game::MeshEntity *highlight_brick_;
-//    glm::ivec3 highlight_pos_;
+    game::Mesh *highlight_brick_;
+    game::Material *highlight_brick_mtl_;
+    glm::ivec3 highlight_pos_;
 public:
 
     MegoPlayer(Grid *grid_);
     virtual ~MegoPlayer();
 
     void update();
+    void render();
 
     game::Camera *eye() { return eye_; }
 

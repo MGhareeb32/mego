@@ -69,7 +69,11 @@ public:
 
 	glm::ivec3 size() { return size_; }
 	glm::ivec3 spawn_point() { return spawn_point_; }
-	void set_detail_center(glm::ivec3 p) { detail_center_ = p; }
+    void set_detail_center(glm::ivec3 p) { detail_center_ = p; }
+
+    glm::mat4 brick_trans(glm::ivec3 p) {
+        return brick_trans_[p.z][p.y][p.x];
+    }
 
 	// conversion
 
