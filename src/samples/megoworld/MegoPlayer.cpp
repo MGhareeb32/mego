@@ -91,11 +91,13 @@ void MegoPlayer::update() {
     // crouch
     GLfloat prev_ht = ht_;
     ht_ += (.8f * (1 /*+ !crouching_*/) * HT - ht_) * .5;
-    eye_->translate(glm::vec3(0, 0, ht_ - prev_ht));
+//    eye_->translate();
 
     // fps controls
     glm::vec2 delta = game::mouse_pos_ - game::mouse_pos_prev_;
     eye_->transform(eye_->fpsRotation(speed * delta, GL_FALSE, GL_FALSE));
+    eye_->translate(-eye_->o());
+    eye_->translate(o() + glm::vec3(0.f, 0.f, 0.04f + .8f * (1 /*+ !crouching_*/) * HT));
 
     // gravity
     falling_ = placeFree(o() + glm::vec3(0, 0, zspeed_ - ht_ * .3f));

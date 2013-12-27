@@ -11,7 +11,7 @@ MegoWorld::MegoWorld() {
     game::setUniformShowBackface(GL_FALSE);
 
     // load map
-    grid_ = new Grid("res/megoworld/gen.map");
+    grid_ = new Grid("res/megoworld/default.map");
     addChild("grid", grid_);
     // camera
     player_ = new MegoPlayer(grid_);

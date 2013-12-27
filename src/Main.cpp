@@ -7,10 +7,9 @@
 
 const GLfloat DISPLAY_WIDTH = 800;
 const GLfloat DISPLAY_HEIGHT = 600;
-const GLfloat DISPLAY_FPS = 60;
+const GLfloat DISPLAY_FPS = 30;
 
 int main(int argc, char **argv) {
-    WorldGen::generate(glm::ivec3(256, 256, 64), 19920804, 256 * 256, 1);
     game::init(argc, argv, DISPLAY_WIDTH, DISPLAY_HEIGHT, "");
     game::sceneSet(new MegoWorld());
     game::start(DISPLAY_FPS);
