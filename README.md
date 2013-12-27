@@ -1,15 +1,16 @@
-# Mego
+![ScreenShot](https://raw.github.com/MGhareeb32/mego/master/screenshot.png)
+
+# MEGO
 
 Minecraft with MEGO's.
 
-![ScreenShot](https://raw.github.com/MGhareeb32/mego/master/screenshot.png)
+[![ScreenShot](https://raw.github.com/MGhareeb32/mego/master/youtube.png)](http://youtu.be/Q1xIcnBskSo)
 
 This is part of an academic course; everything is implemented from scratch for learning
 purposes. Can be used as an intro to OpenGL 3.1+.
 
-[![ScreenShot](https://raw.github.com/MGhareeb32/mego/master/youtube.png)](http://youtu.be/Q1xIcnBskSo)
 
-### FEATURES
+### Features
 
 1. Basic game engine for OpenGL abstraction, game loop, cameras, light, transformation,
    collision detection, model/texture loading, materials, game entities, and hierarchies.
@@ -17,9 +18,9 @@ purposes. Can be used as an intro to OpenGL 3.1+.
 3. Basic inventory and item switching system.
 4. Small map generator.
 
-## DEVELOPMENT
+## Development
 
-### ECLIPSE WITH MINGW
+### Eclipse with MinGW
 
 0. Clone the repo:
       git clone https://github.com/MGhareeb32/mego.git mego
@@ -33,7 +34,7 @@ purposes. Can be used as an intro to OpenGL 3.1+.
     Click Add. Type in /mego/include/soil. Is a workspace path. Ok.
 7. Hit Ok, Build, and Run. 
 
-## TODO LIST
+## TODO List
 1. Optimise bricks rendering.
 2. SQLite for storing the state.
 3. Advanced terrain generator with extensible biomes.
