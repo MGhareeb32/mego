@@ -1,14 +1,10 @@
 ![ScreenShot](https://raw.github.com/MGhareeb32/mego/master/screenshot.png)
 
-# MEGO
-
 Minecraft with MEGO's.
-
-[![ScreenShot](https://raw.github.com/MGhareeb32/mego/master/youtube.png)](http://youtu.be/Q1xIcnBskSo)
-
 This is part of an academic course; everything is implemented from scratch for learning
 purposes. Can be used as an intro to OpenGL 3.1+.
 
+[![ScreenShot](https://raw.github.com/MGhareeb32/mego/master/youtube.png)](http://youtu.be/Q1xIcnBskSo)
 
 ### Features
 
